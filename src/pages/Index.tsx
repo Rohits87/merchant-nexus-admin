@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
@@ -15,7 +16,7 @@ interface TabItem {
   label: string;
   section: string;
   isForm?: boolean;
-  formActiveTab?: string;
+  entityId?: string;
 }
 
 const sectionLabels: Record<string, string> = {
@@ -39,6 +40,7 @@ const Index = () => {
   const [activeTopNav, setActiveTopNav] = useState('overview');
 
   const handleSectionChange = (section: string, parentId?: string) => {
+    // Only create tabs for main sections, not for sub-navigation changes
     const tabId = section;
 
     const existingTab = openTabs.find(tab => tab.id === tabId);
@@ -53,6 +55,8 @@ const Index = () => {
       setOpenTabs(prev => [...prev, newTab]);
       setActiveTab(tabId);
     }
+    
+    // Reset top navigation to overview when switching sections
     setActiveTopNav('overview');
   };
 
@@ -68,7 +72,7 @@ const Index = () => {
         label: `Merchant ${merchantId}`,
         section: 'merchants',
         isForm: true,
-        formActiveTab: activeTopNav
+        entityId: merchantId
       };
       setOpenTabs(prev => [...prev, newTab]);
       setActiveTab(tabId);
@@ -87,7 +91,7 @@ const Index = () => {
         label: 'New Merchant',
         section: 'merchants',
         isForm: true,
-        formActiveTab: activeTopNav
+        entityId: 'new'
       };
       setOpenTabs(prev => [...prev, newTab]);
       setActiveTab(tabId);
@@ -106,7 +110,7 @@ const Index = () => {
         label: `Acquirer ${acquirerId}`,
         section: 'acquirer-banks',
         isForm: true,
-        formActiveTab: activeTopNav
+        entityId: acquirerId
       };
       setOpenTabs(prev => [...prev, newTab]);
       setActiveTab(tabId);
@@ -125,7 +129,7 @@ const Index = () => {
         label: 'New Acquirer',
         section: 'acquirer-banks',
         isForm: true,
-        formActiveTab: activeTopNav
+        entityId: 'new'
       };
       setOpenTabs(prev => [...prev, newTab]);
       setActiveTab(tabId);
@@ -144,7 +148,7 @@ const Index = () => {
         label: `Gateway ${gatewayId}`,
         section: 'payment-gateways',
         isForm: true,
-        formActiveTab: activeTopNav
+        entityId: gatewayId
       };
       setOpenTabs(prev => [...prev, newTab]);
       setActiveTab(tabId);
@@ -163,33 +167,12 @@ const Index = () => {
         label: 'New Gateway',
         section: 'payment-gateways',
         isForm: true,
-        formActiveTab: activeTopNav
+        entityId: 'new'
       };
       setOpenTabs(prev => [...prev, newTab]);
       setActiveTab(tabId);
     }
   };
-
-  const getSectionLabel = (section: string) => sectionLabels[section] || section;
-
-  const merchantTopNavItems = [
-    { id: 'institution', label: 'Institution' },
-    { id: 'address', label: 'Address' },
-    { id: 'contact', label: 'Contact' },
-    { id: 'configuration', label: 'Configuration' }
-  ];
-
-  const acquirerTopNavItems = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'details', label: 'Details' },
-    { id: 'technical-info', label: 'Technical Info' }
-  ];
-
-  const gatewayTopNavItems = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'details', label: 'Details' },
-    { id: 'technical-info', label: 'Technical Info' }
-  ];
 
   const getCurrentTab = () => {
     return openTabs.find(tab => tab.id === activeTab);
@@ -198,15 +181,25 @@ const Index = () => {
   const getTopNavItems = () => {
     const currentTab = getCurrentTab();
     if (!currentTab) return undefined;
+    
+    // Only show top navigation for sections that need it
     switch (currentTab.section) {
       case 'all-merchants':
       case 'pricing-configuration':
       case 'terminal-configuration':
-        return undefined;
+        return undefined; // No top nav for these sections
       case 'acquirer-banks':
-        return acquirerTopNavItems;
+        return [
+          { id: 'overview', label: 'Overview' },
+          { id: 'details', label: 'Details' },
+          { id: 'technical-info', label: 'Technical Info' }
+        ];
       case 'payment-gateways':
-        return gatewayTopNavItems;
+        return [
+          { id: 'overview', label: 'Overview' },
+          { id: 'details', label: 'Details' },
+          { id: 'technical-info', label: 'Technical Info' }
+        ];
       default:
         return undefined;
     }
@@ -282,6 +275,11 @@ const Index = () => {
             </div>
           </div>
         );
+      case 'merchants':
+        if (tab.isForm && tab.entityId) {
+          return <MerchantForm id={tab.entityId === 'new' ? undefined : tab.entityId} />;
+        }
+        break;
       default:
         return (
           <div className="flex items-center justify-center h-64">
@@ -293,6 +291,15 @@ const Index = () => {
             </div>
           </div>
         );
+    }
+  };
+
+  const closeTab = (tabId: string) => {
+    const newTabs = openTabs.filter(t => t.id !== tabId);
+    setOpenTabs(newTabs);
+    if (activeTab === tabId) {
+      const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : 'dashboard';
+      setActiveTab(newActiveTab);
     }
   };
 
@@ -319,12 +326,7 @@ const Index = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      const newTabs = openTabs.filter(t => t.id !== tab.id);
-                      setOpenTabs(newTabs);
-                      if (activeTab === tab.id) {
-                        const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : 'dashboard';
-                        setActiveTab(newActiveTab);
-                      }
+                      closeTab(tab.id);
                     }}
                     className="ml-1 p-1 hover:bg-gray-200 rounded"
                   >
