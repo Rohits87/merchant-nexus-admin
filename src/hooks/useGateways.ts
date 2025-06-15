@@ -1,12 +1,15 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
+
+type PaymentMethod = Database['public']['Enums']['payment_method'];
 
 export interface Gateway {
   id: string;
   name: string;
   code: string;
-  supported_methods: string[];
+  supported_methods: PaymentMethod[] | null;
   auth_endpoint?: string;
   capture_endpoint?: string;
   refund_endpoint?: string;

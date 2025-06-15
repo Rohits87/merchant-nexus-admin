@@ -1,6 +1,9 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
+
+type PaymentMethod = Database['public']['Enums']['payment_method'];
 
 export interface Merchant {
   id: string;
@@ -29,7 +32,7 @@ export interface Merchant {
   data_encryption_key?: string;
   return_url?: string;
   callback_url?: string;
-  payment_methods?: string[];
+  payment_methods?: PaymentMethod[] | null;
   theme?: string;
   created_at: string;
   updated_at: string;

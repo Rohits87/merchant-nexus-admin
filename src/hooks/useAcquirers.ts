@@ -6,7 +6,7 @@ export interface Acquirer {
   id: string;
   bank_name: string;
   acquirer_code: string;
-  bin_ranges: string[];
+  bin_ranges: string[] | null;
   country?: string;
   currency?: string;
   support_email?: string;
