@@ -17,7 +17,7 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
-  { id: 'merchants', label: 'Merchants', icon: Building },
+  { id: 'institutions', label: 'Institutions', icon: Building },
   { id: 'transactions', label: 'Transactions', icon: CreditCard },
   { id: 'reports', label: 'Reports', icon: BarChart3 },
   { id: 'users', label: 'Users', icon: Users },

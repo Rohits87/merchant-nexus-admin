@@ -2,42 +2,42 @@
 import React, { useState } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
-import { MerchantsList } from '@/components/merchants/MerchantsList';
-import { MerchantForm } from '@/components/merchants/MerchantForm';
+import { InstitutionsList } from '@/components/institutions/InstitutionsList';
+import { InstitutionForm } from '@/components/institutions/InstitutionForm';
 
 const Index = () => {
   const [currentSection, setCurrentSection] = useState('dashboard');
   const [activeTopNav, setActiveTopNav] = useState('institution');
-  const [showMerchantForm, setShowMerchantForm] = useState(false);
+  const [showInstitutionForm, setShowInstitutionForm] = useState(false);
 
-  const merchantTopNavItems = [
+  const institutionTopNavItems = [
     { id: 'institution', label: 'Institution' },
     { id: 'address', label: 'Address' },
     { id: 'contact', label: 'Contact' },
     { id: 'configuration', label: 'Configuration' }
   ];
 
-  const handleMerchantSelect = (merchantId: string) => {
-    console.log('Selected merchant:', merchantId);
-    setShowMerchantForm(true);
+  const handleInstitutionSelect = (institutionId: string) => {
+    console.log('Selected institution:', institutionId);
+    setShowInstitutionForm(true);
   };
 
-  const handleNewMerchant = () => {
-    setShowMerchantForm(true);
+  const handleNewInstitution = () => {
+    setShowInstitutionForm(true);
   };
 
   const renderContent = () => {
     switch (currentSection) {
       case 'dashboard':
         return <DashboardOverview />;
-      case 'merchants':
-        if (showMerchantForm) {
-          return <MerchantForm activeTab={activeTopNav} />;
+      case 'institutions':
+        if (showInstitutionForm) {
+          return <InstitutionForm activeTab={activeTopNav} />;
         }
         return (
-          <MerchantsList 
-            onMerchantSelect={handleMerchantSelect}
-            onNewMerchant={handleNewMerchant}
+          <InstitutionsList 
+            onInstitutionSelect={handleInstitutionSelect}
+            onNewInstitution={handleNewInstitution}
           />
         );
       default:
@@ -59,9 +59,9 @@ const Index = () => {
       currentSection={currentSection}
       onSectionChange={(section) => {
         setCurrentSection(section);
-        setShowMerchantForm(false);
+        setShowInstitutionForm(false);
       }}
-      topNavItems={currentSection === 'merchants' && showMerchantForm ? merchantTopNavItems : undefined}
+      topNavItems={currentSection === 'institutions' && showInstitutionForm ? institutionTopNavItems : undefined}
       activeTopNav={activeTopNav}
       onTopNavChange={setActiveTopNav}
     >

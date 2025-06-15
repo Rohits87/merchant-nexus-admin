@@ -7,11 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface MerchantFormProps {
+interface InstitutionFormProps {
   activeTab: string;
 }
 
-export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
+export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) => {
   const [formData, setFormData] = useState({
     // Institution data
     institutionId: '',
@@ -51,8 +51,8 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
   const renderInstitutionTab = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Institution Information</CardTitle>
-        <CardDescription>Configure basic institution details and settings</CardDescription>
+        <CardTitle>Institution Onboarding</CardTitle>
+        <CardDescription>Configure basic institution details and settings for onboarding</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -166,8 +166,8 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
   const renderAddressTab = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Address Information</CardTitle>
-        <CardDescription>Configure merchant address details</CardDescription>
+        <CardTitle>Institution Address</CardTitle>
+        <CardDescription>Configure institution address details for onboarding</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -252,8 +252,8 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
   const renderContactTab = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Contact Information</CardTitle>
-        <CardDescription>Configure primary and technical contact details</CardDescription>
+        <CardTitle>Institution Contact Information</CardTitle>
+        <CardDescription>Configure primary and technical contact details for institution onboarding</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -342,7 +342,7 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
     <Card>
       <CardHeader>
         <CardTitle>Payment Configuration</CardTitle>
-        <CardDescription>Configure payment page features and settings</CardDescription>
+        <CardDescription>Configure payment page features and settings for the institution</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -403,7 +403,7 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
       
       <div className="flex justify-end space-x-4">
         <Button variant="outline">Cancel</Button>
-        <Button>Save Changes</Button>
+        <Button>Save Institution</Button>
       </div>
     </div>
   );
