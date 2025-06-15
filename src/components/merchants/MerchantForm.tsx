@@ -7,23 +7,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface InstitutionFormProps {
+interface MerchantFormProps {
   activeTab: string;
 }
 
-export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) => {
+export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
   const [formData, setFormData] = useState({
     // Institution data
-    institutionId: '',
-    institutionName: '',
+    merchantId: '',
+    merchantName: '',
+    businessType: '',
+    merchantCode: '',
     description: '',
-    institutionUserId: '',
-    userRole: '',
     enableStatus: 'active',
     webAddress: '',
-    dataEncryptionKey: '',
     language: 'english',
-    numberOfUsersAllowed: '',
     
     // Address data
     addressLine1: '',
@@ -41,39 +39,81 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
     emailAddress: '',
     technicalContactName: '',
     technicalPhoneNumber: '',
-    technicalEmailAddress: ''
+    technicalEmailAddress: '',
+    
+    // Configuration data
+    dataEncryptionKey: '',
+    returnUrl: '',
+    callbackUrl: '',
+    paymentMethods: [] as string[],
+    theme: 'default'
   });
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handlePaymentMethodChange = (method: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      paymentMethods: checked 
+        ? [...prev.paymentMethods, method]
+        : prev.paymentMethods.filter(m => m !== method)
+    }));
+  };
+
   const renderInstitutionTab = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Institution Onboarding</CardTitle>
-        <CardDescription>Configure basic institution details and settings for onboarding</CardDescription>
+        <CardTitle>Merchant Information</CardTitle>
+        <CardDescription>Configure basic merchant details for onboarding</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="institutionId">Institution ID</Label>
+            <Label htmlFor="merchantId">Merchant ID</Label>
             <Input
-              id="institutionId"
-              value={formData.institutionId}
-              onChange={(e) => handleInputChange('institutionId', e.target.value)}
-              placeholder="100"
+              id="merchantId"
+              value={formData.merchantId}
+              onChange={(e) => handleInputChange('merchantId', e.target.value)}
+              placeholder="MERCH001"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="institutionName">Institution Name</Label>
+            <Label htmlFor="merchantCode">Merchant Code</Label>
             <Input
-              id="institutionName"
-              value={formData.institutionName}
-              onChange={(e) => handleInputChange('institutionName', e.target.value)}
-              placeholder="FAB BANK"
+              id="merchantCode"
+              value={formData.merchantCode}
+              onChange={(e) => handleInputChange('merchantCode', e.target.value)}
+              placeholder="TECH001"
             />
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="merchantName">Business Name</Label>
+          <Input
+            id="merchantName"
+            value={formData.merchantName}
+            onChange={(e) => handleInputChange('merchantName', e.target.value)}
+            placeholder="Tech Solutions Ltd"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="businessType">Business Type</Label>
+          <Select value={formData.businessType} onValueChange={(value) => handleInputChange('businessType', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select business type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ecommerce">E-commerce</SelectItem>
+              <SelectItem value="retail">Retail</SelectItem>
+              <SelectItem value="services">Services</SelectItem>
+              <SelectItem value="manufacturing">Manufacturing</SelectItem>
+              <SelectItem value="other">Other</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
@@ -82,39 +122,14 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
             id="description"
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
-            placeholder="FAB BANK"
+            placeholder="Brief description of the business"
             rows={3}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="institutionUserId">Institution User ID</Label>
-            <Input
-              id="institutionUserId"
-              value={formData.institutionUserId}
-              onChange={(e) => handleInputChange('institutionUserId', e.target.value)}
-              placeholder="FABUSER"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="userRole">User Role</Label>
-            <Select value={formData.userRole} onValueChange={(value) => handleInputChange('userRole', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="INSTITUTION ADMIN" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="admin">INSTITUTION ADMIN</SelectItem>
-                <SelectItem value="user">USER</SelectItem>
-                <SelectItem value="viewer">VIEWER</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="enableStatus">Enable Status</Label>
+            <Label htmlFor="enableStatus">Status</Label>
             <Select value={formData.enableStatus} onValueChange={(value) => handleInputChange('enableStatus', value)}>
               <SelectTrigger>
                 <SelectValue />
@@ -122,21 +137,10 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
               <SelectContent>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="webAddress">Web Address</Label>
-            <Input
-              id="webAddress"
-              value={formData.webAddress}
-              onChange={(e) => handleInputChange('webAddress', e.target.value)}
-              placeholder="https://fabpaybankortal.bankfab.com/BNKPTI"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="language">Language</Label>
             <Select value={formData.language} onValueChange={(value) => handleInputChange('language', value)}>
@@ -149,15 +153,16 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="numberOfUsersAllowed">Number of Users Allowed</Label>
-            <Input
-              id="numberOfUsersAllowed"
-              value={formData.numberOfUsersAllowed}
-              onChange={(e) => handleInputChange('numberOfUsersAllowed', e.target.value)}
-              placeholder="100"
-            />
-          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="webAddress">Website URL</Label>
+          <Input
+            id="webAddress"
+            value={formData.webAddress}
+            onChange={(e) => handleInputChange('webAddress', e.target.value)}
+            placeholder="https://example.com"
+          />
         </div>
       </CardContent>
     </Card>
@@ -166,8 +171,8 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
   const renderAddressTab = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Institution Address</CardTitle>
-        <CardDescription>Configure institution address details for onboarding</CardDescription>
+        <CardTitle>Business Address</CardTitle>
+        <CardDescription>Configure merchant address details</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -177,7 +182,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
               id="addressLine1"
               value={formData.addressLine1}
               onChange={(e) => handleInputChange('addressLine1', e.target.value)}
-              placeholder="Tourist Club Area"
+              placeholder="Street address"
             />
           </div>
           <div className="space-y-2">
@@ -186,7 +191,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
               id="addressLine2"
               value={formData.addressLine2}
               onChange={(e) => handleInputChange('addressLine2', e.target.value)}
-              placeholder="Salim Street"
+              placeholder="Apartment, suite, etc."
             />
           </div>
           <div className="space-y-2">
@@ -206,16 +211,16 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
               id="city"
               value={formData.city}
               onChange={(e) => handleInputChange('city', e.target.value)}
-              placeholder="ADNEC"
+              placeholder="City"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="state">State</Label>
+            <Label htmlFor="state">State/Province</Label>
             <Input
               id="state"
               value={formData.state}
               onChange={(e) => handleInputChange('state', e.target.value)}
-              placeholder="Abu Dhabi"
+              placeholder="State or Province"
             />
           </div>
         </div>
@@ -225,7 +230,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
             <Label htmlFor="country">Country</Label>
             <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
               <SelectTrigger>
-                <SelectValue placeholder="UAE" />
+                <SelectValue placeholder="Select country" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="UAE">UAE</SelectItem>
@@ -236,12 +241,12 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="zipCode">Zip Code</Label>
+            <Label htmlFor="zipCode">Zip/Postal Code</Label>
             <Input
               id="zipCode"
               value={formData.zipCode}
               onChange={(e) => handleInputChange('zipCode', e.target.value)}
-              placeholder="00124"
+              placeholder="Zip code"
             />
           </div>
         </div>
@@ -252,8 +257,8 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
   const renderContactTab = () => (
     <Card>
       <CardHeader>
-        <CardTitle>Institution Contact Information</CardTitle>
-        <CardDescription>Configure primary and technical contact details for institution onboarding</CardDescription>
+        <CardTitle>Contact Information</CardTitle>
+        <CardDescription>Configure primary and technical contact details</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -265,7 +270,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
                 id="contactName"
                 value={formData.contactName}
                 onChange={(e) => handleInputChange('contactName', e.target.value)}
-                placeholder="Priyanka"
+                placeholder="Contact person name"
               />
             </div>
             <div className="space-y-2">
@@ -274,7 +279,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
                 id="mobileNumber"
                 value={formData.mobileNumber}
                 onChange={(e) => handleInputChange('mobileNumber', e.target.value)}
-                placeholder="0553105754"
+                placeholder="Mobile number"
               />
             </div>
           </div>
@@ -285,7 +290,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
                 id="faxNumber"
                 value={formData.faxNumber}
                 onChange={(e) => handleInputChange('faxNumber', e.target.value)}
-                placeholder="2567"
+                placeholder="Fax number"
               />
             </div>
             <div className="space-y-2">
@@ -295,7 +300,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
                 type="email"
                 value={formData.emailAddress}
                 onChange={(e) => handleInputChange('emailAddress', e.target.value)}
-                placeholder="Munisha.Misapple@bankfab.com"
+                placeholder="contact@business.com"
               />
             </div>
           </div>
@@ -310,7 +315,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
                 id="technicalContactName"
                 value={formData.technicalContactName}
                 onChange={(e) => handleInputChange('technicalContactName', e.target.value)}
-                placeholder="Admin"
+                placeholder="Technical contact name"
               />
             </div>
             <div className="space-y-2">
@@ -319,7 +324,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
                 id="technicalPhoneNumber"
                 value={formData.technicalPhoneNumber}
                 onChange={(e) => handleInputChange('technicalPhoneNumber', e.target.value)}
-                placeholder="0553105754"
+                placeholder="Technical phone number"
               />
             </div>
           </div>
@@ -330,7 +335,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
               type="email"
               value={formData.technicalEmailAddress}
               onChange={(e) => handleInputChange('technicalEmailAddress', e.target.value)}
-              placeholder="Priyanka.Rajashekharam@bankfab.com"
+              placeholder="tech@business.com"
             />
           </div>
         </div>
@@ -342,7 +347,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
     <Card>
       <CardHeader>
         <CardTitle>Payment Configuration</CardTitle>
-        <CardDescription>Configure payment page features and settings for the institution</CardDescription>
+        <CardDescription>Configure payment features and settings for the merchant</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
@@ -352,31 +357,62 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
               id="dataEncryptionKey"
               value={formData.dataEncryptionKey}
               onChange={(e) => handleInputChange('dataEncryptionKey', e.target.value)}
-              placeholder="dFjL8JHmLw7_x0m"
+              placeholder="Encryption key"
             />
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="returnUrl">Return URL</Label>
+              <Input
+                id="returnUrl"
+                value={formData.returnUrl}
+                onChange={(e) => handleInputChange('returnUrl', e.target.value)}
+                placeholder="https://merchant.com/return"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="callbackUrl">Callback URL</Label>
+              <Input
+                id="callbackUrl"
+                value={formData.callbackUrl}
+                onChange={(e) => handleInputChange('callbackUrl', e.target.value)}
+                placeholder="https://merchant.com/callback"
+              />
+            </div>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center space-x-2">
-            <input type="checkbox" id="enablePaymentPage" className="rounded" />
-            <Label htmlFor="enablePaymentPage">Enable Payment Page</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input type="checkbox" id="enableRecurringPayments" className="rounded" />
-            <Label htmlFor="enableRecurringPayments">Enable Recurring Payments</Label>
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">Payment Methods</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {['Credit Card', 'Debit Card', 'UPI', 'Net Banking', 'Wallet', 'BNPL'].map((method) => (
+              <div key={method} className="flex items-center space-x-2">
+                <input 
+                  type="checkbox" 
+                  id={method}
+                  checked={formData.paymentMethods.includes(method)}
+                  onChange={(e) => handlePaymentMethodChange(method, e.target.checked)}
+                  className="rounded" 
+                />
+                <Label htmlFor={method}>{method}</Label>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center space-x-2">
-            <input type="checkbox" id="enableRefunds" className="rounded" />
-            <Label htmlFor="enableRefunds">Enable Refunds</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input type="checkbox" id="enableTokenization" className="rounded" />
-            <Label htmlFor="enableTokenization">Enable Tokenization</Label>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="theme">Payment Page Theme</Label>
+          <Select value={formData.theme} onValueChange={(value) => handleInputChange('theme', value)}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Default</SelectItem>
+              <SelectItem value="minimal">Minimal</SelectItem>
+              <SelectItem value="branded">Branded</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </CardContent>
     </Card>
@@ -403,7 +439,7 @@ export const InstitutionForm: React.FC<InstitutionFormProps> = ({ activeTab }) =
       
       <div className="flex justify-end space-x-4">
         <Button variant="outline">Cancel</Button>
-        <Button>Save Institution</Button>
+        <Button>Save Merchant</Button>
       </div>
     </div>
   );

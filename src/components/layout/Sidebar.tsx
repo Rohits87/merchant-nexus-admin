@@ -6,7 +6,12 @@ import {
   CreditCard, 
   BarChart3, 
   Settings,
-  Building
+  Building,
+  Landmark,
+  Globe,
+  ArrowRightLeft,
+  FileText,
+  Shield
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -17,10 +22,12 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: Home },
-  { id: 'institutions', label: 'Institutions', icon: Building },
-  { id: 'transactions', label: 'Transactions', icon: CreditCard },
-  { id: 'reports', label: 'Reports', icon: BarChart3 },
-  { id: 'users', label: 'Users', icon: Users },
+  { id: 'merchants', label: 'Merchants', icon: Building },
+  { id: 'acquirer-banks', label: 'Acquirer Banks', icon: Landmark },
+  { id: 'payment-gateways', label: 'Payment Gateways', icon: Globe },
+  { id: 'gateway-mapping', label: 'Gateway Mapping', icon: ArrowRightLeft },
+  { id: 'users', label: 'Users & Access', icon: Users },
+  { id: 'audit-logs', label: 'Audit Logs', icon: FileText },
   { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
