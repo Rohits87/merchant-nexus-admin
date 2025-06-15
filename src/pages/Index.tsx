@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
@@ -93,6 +92,25 @@ const Index = () => {
         section: 'merchants',
         isForm: true,
         entityId: 'new'
+      };
+      setOpenTabs(prev => [...prev, newTab]);
+      setActiveTab(tabId);
+    }
+  };
+
+  const handleMerchantEdit = (merchantId: string) => {
+    const tabId = `merchant-edit-${merchantId}`;
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    
+    if (existingTab) {
+      setActiveTab(tabId);
+    } else {
+      const newTab: TabItem = {
+        id: tabId,
+        label: `Edit Merchant`,
+        section: 'merchants',
+        isForm: true,
+        entityId: merchantId
       };
       setOpenTabs(prev => [...prev, newTab]);
       setActiveTab(tabId);
@@ -214,6 +232,7 @@ const Index = () => {
         return (
           <MerchantsList 
             onMerchantSelect={handleMerchantSelect}
+            onMerchantEdit={handleMerchantEdit}
             onNewMerchant={handleNewMerchant}
           />
         );
@@ -278,7 +297,16 @@ const Index = () => {
         );
       case 'merchants':
         if (tab.isForm && tab.entityId) {
-          return <MerchantForm id={tab.entityId === 'new' ? undefined : tab.entityId} />;
+          if (tab.id.includes('edit')) {
+            return (
+              <MerchantFormEdit 
+                merchantId={tab.entityId === 'new' ? undefined : tab.entityId}
+                onBack={() => closeTab(tab.id)}
+              />
+            );
+          } else {
+            return <MerchantForm id={tab.entityId === 'new' ? undefined : tab.entityId} />;
+          }
         }
         break;
       default:

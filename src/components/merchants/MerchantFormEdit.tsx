@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import { useCreateMerchant, useUpdateMerchant, useMerchant, Merchant } from '@/hooks/useMerchants';
 import { useToast } from '@/hooks/use-toast';
@@ -75,7 +76,7 @@ export const MerchantFormEdit: React.FC<MerchantFormEditProps> = ({
   const updateMerchant = useUpdateMerchant();
   const { toast } = useToast();
 
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors, isSubmitting } } = useForm<MerchantFormData>({
+  const form = useForm<MerchantFormData>({
     defaultValues: {
       status: 'pending',
       language: 'English',
@@ -88,7 +89,7 @@ export const MerchantFormEdit: React.FC<MerchantFormEditProps> = ({
 
   useEffect(() => {
     if (existingMerchant && isEditing) {
-      reset({
+      const formData = {
         merchant_id: existingMerchant.merchant_id,
         merchant_code: existingMerchant.merchant_code,
         merchant_name: existingMerchant.merchant_name,
@@ -116,10 +117,11 @@ export const MerchantFormEdit: React.FC<MerchantFormEditProps> = ({
         callback_url: existingMerchant.callback_url || '',
         payment_methods: existingMerchant.payment_methods || [],
         theme: existingMerchant.theme || 'Default',
-      });
+      };
+      form.reset(formData);
       setSelectedPaymentMethods(existingMerchant.payment_methods || []);
     }
-  }, [existingMerchant, isEditing, reset]);
+  }, [existingMerchant, isEditing, form]);
 
   const onSubmit = async (data: MerchantFormData) => {
     try {
@@ -189,319 +191,514 @@ export const MerchantFormEdit: React.FC<MerchantFormEditProps> = ({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="basic">Basic Info</TabsTrigger>
-            <TabsTrigger value="address">Address</TabsTrigger>
-            <TabsTrigger value="contact">Contact</TabsTrigger>
-            <TabsTrigger value="config">Configuration</TabsTrigger>
-          </TabsList>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="basic">Basic Info</TabsTrigger>
+              <TabsTrigger value="address">Address</TabsTrigger>
+              <TabsTrigger value="contact">Contact</TabsTrigger>
+              <TabsTrigger value="config">Configuration</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="basic" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-                <CardDescription>Enter the basic merchant details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="merchant_id">Merchant ID *</Label>
-                    <Input
-                      id="merchant_id"
-                      {...register('merchant_id', { required: 'Merchant ID is required' })}
-                      error={errors.merchant_id?.message}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="merchant_code">Merchant Code *</Label>
-                    <Input
-                      id="merchant_code"
-                      {...register('merchant_code', { required: 'Merchant Code is required' })}
-                      error={errors.merchant_code?.message}
-                    />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="merchant_name">Business Name *</Label>
-                  <Input
-                    id="merchant_name"
-                    {...register('merchant_name', { required: 'Business Name is required' })}
-                    error={errors.merchant_name?.message}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="business_type">Business Type</Label>
-                    <Input
-                      id="business_type"
-                      {...register('business_type')}
-                      placeholder="e.g., E-commerce, Retail"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select onValueChange={(value) => setValue('status', value as any)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="suspended">Suspended</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    {...register('description')}
-                    placeholder="Brief description of the business"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="web_address">Website URL</Label>
-                    <Input
-                      id="web_address"
-                      {...register('web_address')}
-                      placeholder="https://example.com"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="language">Language</Label>
-                    <Select onValueChange={(value) => setValue('language', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="English">English</SelectItem>
-                        <SelectItem value="Arabic">Arabic</SelectItem>
-                        <SelectItem value="French">French</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="address" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Business Address</CardTitle>
-                <CardDescription>Complete address information</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="address_line1">Address Line 1</Label>
-                  <Input id="address_line1" {...register('address_line1')} />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="address_line2">Address Line 2</Label>
-                  <Input id="address_line2" {...register('address_line2')} />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="address_line3">Address Line 3</Label>
-                  <Input id="address_line3" {...register('address_line3')} />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input id="city" {...register('city')} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="state">State/Province</Label>
-                    <Input id="state" {...register('state')} />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="country">Country</Label>
-                    <Input id="country" {...register('country')} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="zip_code">Zip/Postal Code</Label>
-                    <Input id="zip_code" {...register('zip_code')} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="contact" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
-                <CardDescription>Primary and technical contact details</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Primary Contact</h3>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="contact_name">Contact Name</Label>
-                      <Input id="contact_name" {...register('contact_name')} />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="mobile_number">Mobile Number</Label>
-                        <Input id="mobile_number" {...register('mobile_number')} />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="fax_number">Fax Number</Label>
-                        <Input id="fax_number" {...register('fax_number')} />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="email_address">Email Address</Label>
-                      <Input 
-                        id="email_address" 
-                        type="email" 
-                        {...register('email_address')} 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Technical Contact</h3>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="technical_contact_name">Technical Contact Name</Label>
-                      <Input id="technical_contact_name" {...register('technical_contact_name')} />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="technical_phone_number">Technical Phone Number</Label>
-                      <Input id="technical_phone_number" {...register('technical_phone_number')} />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="technical_email_address">Technical Email Address</Label>
-                      <Input 
-                        id="technical_email_address" 
-                        type="email" 
-                        {...register('technical_email_address')} 
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="config" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Configuration</CardTitle>
-                <CardDescription>Payment methods and technical settings</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label className="text-base font-medium">Payment Methods</Label>
-                  <p className="text-sm text-gray-600 mb-4">Select the payment methods this merchant will accept</p>
+            <TabsContent value="basic" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Basic Information</CardTitle>
+                  <CardDescription>Enter the basic merchant details</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    {paymentMethodOptions.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={option.value}
-                          checked={selectedPaymentMethods.includes(option.value)}
-                          onCheckedChange={(checked) => 
-                            handlePaymentMethodChange(option.value, checked as boolean)
-                          }
+                    <FormField
+                      control={form.control}
+                      name="merchant_id"
+                      rules={{ required: 'Merchant ID is required' }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Merchant ID *</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="merchant_code"
+                      rules={{ required: 'Merchant Code is required' }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Merchant Code *</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
+                  <FormField
+                    control={form.control}
+                    name="merchant_name"
+                    rules={{ required: 'Business Name is required' }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Business Name *</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="business_type"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Business Type</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="e.g., E-commerce, Retail" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="inactive">Inactive</SelectItem>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="suspended">Suspended</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} placeholder="Brief description of the business" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="web_address"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Website URL</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://example.com" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="language"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Language</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select language" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="English">English</SelectItem>
+                              <SelectItem value="Arabic">Arabic</SelectItem>
+                              <SelectItem value="French">French</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="address" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Business Address</CardTitle>
+                  <CardDescription>Complete address information</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="address_line1"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address Line 1</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="address_line2"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address Line 2</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="address_line3"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address Line 3</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>City</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>State/Province</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="country"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Country</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="zip_code"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Zip/Postal Code</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="contact" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Contact Information</CardTitle>
+                  <CardDescription>Primary and technical contact details</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Primary Contact</h3>
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="contact_name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Contact Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="mobile_number"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Mobile Number</FormLabel>
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                        <Label htmlFor={option.value}>{option.label}</Label>
+                        <FormField
+                          control={form.control}
+                          name="fax_number"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Fax Number</FormLabel>
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                       </div>
-                    ))}
-                  </div>
-                  {selectedPaymentMethods.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-sm text-gray-600 mb-2">Selected methods:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {selectedPaymentMethods.map((method) => (
-                          <Badge key={method} variant="secondary">
-                            {paymentMethodOptions.find(opt => opt.value === method)?.label}
-                          </Badge>
-                        ))}
-                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name="email_address"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email Address</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="email" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                  )}
-                </div>
+                  </div>
 
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="data_encryption_key">Data Encryption Key</Label>
-                    <Input 
-                      id="data_encryption_key" 
-                      {...register('data_encryption_key')}
-                      placeholder="Enter encryption key"
-                    />
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Technical Contact</h3>
+                    <div className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="technical_contact_name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Technical Contact Name</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="technical_phone_number"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Technical Phone Number</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="technical_email_address"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Technical Email Address</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="email" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="return_url">Return URL</Label>
-                    <Input 
-                      id="return_url" 
-                      {...register('return_url')}
-                      placeholder="https://merchant.com/return"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="callback_url">Callback URL</Label>
-                    <Input 
-                      id="callback_url" 
-                      {...register('callback_url')}
-                      placeholder="https://merchant.com/callback"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="theme">Payment Page Theme</Label>
-                    <Select onValueChange={(value) => setValue('theme', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select theme" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Default">Default</SelectItem>
-                        <SelectItem value="Blue">Blue</SelectItem>
-                        <SelectItem value="Green">Green</SelectItem>
-                        <SelectItem value="Dark">Dark</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-        <div className="flex justify-end space-x-4 mt-6">
-          <Button type="button" variant="outline" onClick={onBack}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            <Save className="w-4 h-4 mr-2" />
-            {isEditing ? 'Update Merchant' : 'Create Merchant'}
-          </Button>
-        </div>
-      </form>
+            <TabsContent value="config" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Payment Configuration</CardTitle>
+                  <CardDescription>Payment methods and technical settings</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <Label className="text-base font-medium">Payment Methods</Label>
+                    <p className="text-sm text-gray-600 mb-4">Select the payment methods this merchant will accept</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      {paymentMethodOptions.map((option) => (
+                        <div key={option.value} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={option.value}
+                            checked={selectedPaymentMethods.includes(option.value)}
+                            onCheckedChange={(checked) => 
+                              handlePaymentMethodChange(option.value, checked as boolean)
+                            }
+                          />
+                          <Label htmlFor={option.value}>{option.label}</Label>
+                        </div>
+                      ))}
+                    </div>
+                    {selectedPaymentMethods.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-sm text-gray-600 mb-2">Selected methods:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {selectedPaymentMethods.map((method) => (
+                            <Badge key={method} variant="secondary">
+                              {paymentMethodOptions.find(opt => opt.value === method)?.label}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="data_encryption_key"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Data Encryption Key</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Enter encryption key" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="return_url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Return URL</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://merchant.com/return" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="callback_url"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Callback URL</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="https://merchant.com/callback" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="theme"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Payment Page Theme</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select theme" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="Default">Default</SelectItem>
+                              <SelectItem value="Blue">Blue</SelectItem>
+                              <SelectItem value="Green">Green</SelectItem>
+                              <SelectItem value="Dark">Dark</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+
+          <div className="flex justify-end space-x-4 mt-6">
+            <Button type="button" variant="outline" onClick={onBack}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              <Save className="w-4 h-4 mr-2" />
+              {isEditing ? 'Update Merchant' : 'Create Merchant'}
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };
