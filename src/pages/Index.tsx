@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
@@ -8,13 +7,170 @@ import { AcquirersList } from '@/components/acquirers/AcquirersList';
 import { AcquirerForm } from '@/components/acquirers/AcquirerForm';
 import { GatewaysList } from '@/components/gateways/GatewaysList';
 import { GatewayForm } from '@/components/gateways/GatewayForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { X } from 'lucide-react';
+
+interface TabItem {
+  id: string;
+  label: string;
+  section: string;
+  isForm?: boolean;
+  formActiveTab?: string;
+}
+
+const sectionLabels: Record<string, string> = {
+  'dashboard': 'Dashboard',
+  'all-merchants': 'All Merchants',
+  'pricing-configuration': 'Pricing Configuration',
+  'terminal-configuration': 'Terminal Configuration',
+  'acquirer-banks': 'Acquirer Banks',
+  'payment-gateways': 'Payment Gateways',
+  'gateway-mapping': 'Gateway Mapping',
+  'users': 'Users & Access',
+  'audit-logs': 'Audit Logs',
+  'settings': 'Settings'
+};
 
 const Index = () => {
-  const [currentSection, setCurrentSection] = useState('dashboard');
+  const [openTabs, setOpenTabs] = useState<TabItem[]>([
+    { id: 'dashboard', label: 'Dashboard', section: 'dashboard' }
+  ]);
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [activeTopNav, setActiveTopNav] = useState('overview');
-  const [showMerchantForm, setShowMerchantForm] = useState(false);
-  const [showAcquirerForm, setShowAcquirerForm] = useState(false);
-  const [showGatewayForm, setShowGatewayForm] = useState(false);
+
+  const handleSectionChange = (section: string, parentId?: string) => {
+    const tabId = section;
+
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    if (existingTab) {
+      setActiveTab(tabId);
+    } else {
+      const newTab: TabItem = {
+        id: tabId,
+        label: sectionLabels[section] || section,
+        section: section
+      };
+      setOpenTabs(prev => [...prev, newTab]);
+      setActiveTab(tabId);
+    }
+    setActiveTopNav('overview');
+  };
+
+  const handleMerchantSelect = (merchantId: string) => {
+    const tabId = `merchant-form-${merchantId}`;
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    
+    if (existingTab) {
+      setActiveTab(tabId);
+    } else {
+      const newTab: TabItem = {
+        id: tabId,
+        label: `Merchant ${merchantId}`,
+        section: 'merchants',
+        isForm: true,
+        formActiveTab: activeTopNav
+      };
+      setOpenTabs(prev => [...prev, newTab]);
+      setActiveTab(tabId);
+    }
+  };
+
+  const handleNewMerchant = () => {
+    const tabId = 'merchant-form-new';
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    
+    if (existingTab) {
+      setActiveTab(tabId);
+    } else {
+      const newTab: TabItem = {
+        id: tabId,
+        label: 'New Merchant',
+        section: 'merchants',
+        isForm: true,
+        formActiveTab: activeTopNav
+      };
+      setOpenTabs(prev => [...prev, newTab]);
+      setActiveTab(tabId);
+    }
+  };
+
+  const handleAcquirerSelect = (acquirerId: string) => {
+    const tabId = `acquirer-form-${acquirerId}`;
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    
+    if (existingTab) {
+      setActiveTab(tabId);
+    } else {
+      const newTab: TabItem = {
+        id: tabId,
+        label: `Acquirer ${acquirerId}`,
+        section: 'acquirer-banks',
+        isForm: true,
+        formActiveTab: activeTopNav
+      };
+      setOpenTabs(prev => [...prev, newTab]);
+      setActiveTab(tabId);
+    }
+  };
+
+  const handleNewAcquirer = () => {
+    const tabId = 'acquirer-form-new';
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    
+    if (existingTab) {
+      setActiveTab(tabId);
+    } else {
+      const newTab: TabItem = {
+        id: tabId,
+        label: 'New Acquirer',
+        section: 'acquirer-banks',
+        isForm: true,
+        formActiveTab: activeTopNav
+      };
+      setOpenTabs(prev => [...prev, newTab]);
+      setActiveTab(tabId);
+    }
+  };
+
+  const handleGatewaySelect = (gatewayId: string) => {
+    const tabId = `gateway-form-${gatewayId}`;
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    
+    if (existingTab) {
+      setActiveTab(tabId);
+    } else {
+      const newTab: TabItem = {
+        id: tabId,
+        label: `Gateway ${gatewayId}`,
+        section: 'payment-gateways',
+        isForm: true,
+        formActiveTab: activeTopNav
+      };
+      setOpenTabs(prev => [...prev, newTab]);
+      setActiveTab(tabId);
+    }
+  };
+
+  const handleNewGateway = () => {
+    const tabId = 'gateway-form-new';
+    const existingTab = openTabs.find(tab => tab.id === tabId);
+    
+    if (existingTab) {
+      setActiveTab(tabId);
+    } else {
+      const newTab: TabItem = {
+        id: tabId,
+        label: 'New Gateway',
+        section: 'payment-gateways',
+        isForm: true,
+        formActiveTab: activeTopNav
+      };
+      setOpenTabs(prev => [...prev, newTab]);
+      setActiveTab(tabId);
+    }
+  };
+
+  const getSectionLabel = (section: string) => sectionLabels[section] || section;
 
   const merchantTopNavItems = [
     { id: 'institution', label: 'Institution' },
@@ -35,84 +191,70 @@ const Index = () => {
     { id: 'technical-info', label: 'Technical Info' }
   ];
 
-  const handleMerchantSelect = (merchantId: string) => {
-    console.log('Selected merchant:', merchantId);
-    setShowMerchantForm(true);
-  };
-
-  const handleNewMerchant = () => {
-    setShowMerchantForm(true);
-  };
-
-  const handleAcquirerSelect = (acquirerId: string) => {
-    console.log('Selected acquirer:', acquirerId);
-    setShowAcquirerForm(true);
-  };
-
-  const handleNewAcquirer = () => {
-    setShowAcquirerForm(true);
-  };
-
-  const handleGatewaySelect = (gatewayId: string) => {
-    console.log('Selected gateway:', gatewayId);
-    setShowGatewayForm(true);
-  };
-
-  const handleNewGateway = () => {
-    setShowGatewayForm(true);
+  const getCurrentTab = () => {
+    return openTabs.find(tab => tab.id === activeTab);
   };
 
   const getTopNavItems = () => {
-    if (currentSection === 'merchants' && showMerchantForm) {
-      return merchantTopNavItems;
+    const currentTab = getCurrentTab();
+    if (!currentTab) return undefined;
+    switch (currentTab.section) {
+      case 'all-merchants':
+      case 'pricing-configuration':
+      case 'terminal-configuration':
+        return undefined;
+      case 'acquirer-banks':
+        return acquirerTopNavItems;
+      case 'payment-gateways':
+        return gatewayTopNavItems;
+      default:
+        return undefined;
     }
-    if (currentSection === 'acquirer-banks' && showAcquirerForm) {
-      return acquirerTopNavItems;
-    }
-    if (currentSection === 'payment-gateways' && showGatewayForm) {
-      return gatewayTopNavItems;
-    }
-    return undefined;
   };
 
-  const renderContent = () => {
-    switch (currentSection) {
+  const renderTabContent = (tab: TabItem) => {
+    switch (tab.section) {
       case 'dashboard':
         return <DashboardOverview />;
-      
-      case 'merchants':
-        if (showMerchantForm) {
-          return <MerchantForm activeTab={activeTopNav} />;
-        }
+      case 'all-merchants':
         return (
           <MerchantsList 
             onMerchantSelect={handleMerchantSelect}
             onNewMerchant={handleNewMerchant}
           />
         );
-      
+      case 'pricing-configuration':
+        return (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Pricing Configuration</h3>
+              <p className="text-gray-600">Configure pricing settings for merchants here.</p>
+            </div>
+          </div>
+        );
+      case 'terminal-configuration':
+        return (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Terminal Configuration</h3>
+              <p className="text-gray-600">Configure terminal and POS settings.</p>
+            </div>
+          </div>
+        );
       case 'acquirer-banks':
-        if (showAcquirerForm) {
-          return <AcquirerForm activeTab={activeTopNav} />;
-        }
         return (
           <AcquirersList 
             onAcquirerSelect={handleAcquirerSelect}
             onNewAcquirer={handleNewAcquirer}
           />
         );
-      
       case 'payment-gateways':
-        if (showGatewayForm) {
-          return <GatewayForm activeTab={activeTopNav} />;
-        }
         return (
           <GatewaysList 
             onGatewaySelect={handleGatewaySelect}
             onNewGateway={handleNewGateway}
           />
         );
-      
       case 'gateway-mapping':
         return (
           <div className="flex items-center justify-center h-64">
@@ -122,7 +264,6 @@ const Index = () => {
             </div>
           </div>
         );
-      
       case 'users':
         return (
           <div className="flex items-center justify-center h-64">
@@ -132,7 +273,6 @@ const Index = () => {
             </div>
           </div>
         );
-      
       case 'audit-logs':
         return (
           <div className="flex items-center justify-center h-64">
@@ -142,13 +282,12 @@ const Index = () => {
             </div>
           </div>
         );
-      
       default:
         return (
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {currentSection.charAt(0).toUpperCase() + currentSection.slice(1)}
+                {tab.label}
               </h3>
               <p className="text-gray-600">This section is under development</p>
             </div>
@@ -159,19 +298,49 @@ const Index = () => {
 
   return (
     <AdminLayout
-      currentSection={currentSection}
-      onSectionChange={(section) => {
-        setCurrentSection(section);
-        setShowMerchantForm(false);
-        setShowAcquirerForm(false);
-        setShowGatewayForm(false);
-        setActiveTopNav('overview');
-      }}
+      currentSection={getCurrentTab()?.section || 'dashboard'}
+      onSectionChange={handleSectionChange}
       topNavItems={getTopNavItems()}
       activeTopNav={activeTopNav}
       onTopNavChange={setActiveTopNav}
     >
-      {renderContent()}
+      <div className="h-full flex flex-col">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+          <TabsList className="w-full justify-start h-auto p-1 bg-white border-b rounded-none">
+            {openTabs.map((tab) => (
+              <div key={tab.id} className="flex items-center">
+                <TabsTrigger 
+                  value={tab.id}
+                  className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 border-b-2 border-transparent data-[state=active]:border-blue-700 rounded-none px-4 py-2"
+                >
+                  {tab.label}
+                </TabsTrigger>
+                {tab.id !== 'dashboard' && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const newTabs = openTabs.filter(t => t.id !== tab.id);
+                      setOpenTabs(newTabs);
+                      if (activeTab === tab.id) {
+                        const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : 'dashboard';
+                        setActiveTab(newActiveTab);
+                      }
+                    }}
+                    className="ml-1 p-1 hover:bg-gray-200 rounded"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </TabsList>
+          {openTabs.map((tab) => (
+            <TabsContent key={tab.id} value={tab.id} className="flex-1 mt-0">
+              {renderTabContent(tab)}
+            </TabsContent>
+          ))}
+        </Tabs>
+      </div>
     </AdminLayout>
   );
 };
