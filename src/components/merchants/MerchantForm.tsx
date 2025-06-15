@@ -1,19 +1,21 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface MerchantFormProps {
-  activeTab: string;
+  id?: string;
 }
 
-export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
+export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
+  const [activeTab, setActiveTab] = useState('institution');
+
   // Mock data for demonstration
   const merchantData = {
     // Institution data
-    merchantId: 'MERCH001',
+    merchantId: id || 'MERCH001',
     merchantName: 'Tech Solutions Ltd',
     businessType: 'E-commerce',
     merchantCode: 'TECH001',
@@ -306,7 +308,26 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
 
   return (
     <div className="space-y-6">
-      {renderContent()}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="institution">Institution</TabsTrigger>
+          <TabsTrigger value="address">Address</TabsTrigger>
+          <TabsTrigger value="contact">Contact</TabsTrigger>
+          <TabsTrigger value="configuration">Configuration</TabsTrigger>
+        </TabsList>
+        <TabsContent value="institution" className="mt-6">
+          {renderInstitutionTab()}
+        </TabsContent>
+        <TabsContent value="address" className="mt-6">
+          {renderAddressTab()}
+        </TabsContent>
+        <TabsContent value="contact" className="mt-6">
+          {renderContactTab()}
+        </TabsContent>
+        <TabsContent value="configuration" className="mt-6">
+          {renderConfigurationTab()}
+        </TabsContent>
+      </Tabs>
       
       <div className="flex justify-end space-x-4">
         <Button variant="outline">Edit</Button>
