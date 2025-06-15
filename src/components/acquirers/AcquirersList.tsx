@@ -1,46 +1,12 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Landmark, Mail, Phone, MapPin, CreditCard } from 'lucide-react';
-
-const mockAcquirers = [
-  {
-    id: '1',
-    bankName: 'Emirates NBD',
-    acquirerCode: 'ENBD',
-    binRanges: ['400000-499999', '520000-529999'],
-    country: 'UAE',
-    currency: 'AED',
-    supportEmail: 'support@emiratesnbd.com',
-    supportPhone: '+971-4-123-4567',
-    status: 'active'
-  },
-  {
-    id: '2',
-    bankName: 'ADCB Bank',
-    acquirerCode: 'ADCB',
-    binRanges: ['450000-459999'],
-    country: 'UAE',
-    currency: 'AED',
-    supportEmail: 'support@adcb.com',
-    supportPhone: '+971-2-123-4567',
-    status: 'active'
-  },
-  {
-    id: '3',
-    bankName: 'FAB Bank',
-    acquirerCode: 'FAB',
-    binRanges: ['480000-489999'],
-    country: 'UAE',
-    currency: 'AED',
-    supportEmail: 'support@bankfab.com',
-    supportPhone: '+971-4-987-6543',
-    status: 'inactive'
-  }
-];
+import { Landmark, Mail, Phone, MapPin, CreditCard, Loader2 } from 'lucide-react';
+import { useAcquirers } from '@/hooks/useAcquirers';
+import { useToast } from '@/hooks/use-toast';
 
 interface AcquirersListProps {
   onAcquirerSelect: (acquirerId: string) => void;
@@ -48,6 +14,25 @@ interface AcquirersListProps {
 }
 
 export const AcquirersList: React.FC<AcquirersListProps> = ({ onAcquirerSelect, onNewAcquirer }) => {
+  const { data: acquirers, isLoading, error } = useAcquirers();
+  const { toast } = useToast();
+
+  if (error) {
+    toast({
+      title: "Error",
+      description: "Failed to load acquirers",
+      variant: "destructive",
+    });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -73,37 +58,43 @@ export const AcquirersList: React.FC<AcquirersListProps> = ({ onAcquirerSelect, 
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockAcquirers.map((acquirer) => (
+              {acquirers?.map((acquirer) => (
                 <TableRow key={acquirer.id}>
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <Landmark className="w-4 h-4 text-green-600" />
-                      <span className="font-medium">{acquirer.bankName}</span>
+                      <span className="font-medium">{acquirer.bank_name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-gray-600">{acquirer.acquirerCode}</TableCell>
+                  <TableCell className="text-gray-600">{acquirer.acquirer_code}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-1 text-sm">
                       <CreditCard className="w-3 h-3 text-gray-400" />
-                      <span>{acquirer.binRanges.join(', ')}</span>
+                      <span>{acquirer.bin_ranges.join(', ')}</span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center space-x-1 text-sm">
-                      <MapPin className="w-3 h-3 text-gray-400" />
-                      <span>{acquirer.country} - {acquirer.currency}</span>
-                    </div>
+                    {acquirer.country && acquirer.currency && (
+                      <div className="flex items-center space-x-1 text-sm">
+                        <MapPin className="w-3 h-3 text-gray-400" />
+                        <span>{acquirer.country} - {acquirer.currency}</span>
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <Mail className="w-3 h-3 text-gray-400" />
-                        <span>{acquirer.supportEmail}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Phone className="w-3 h-3 text-gray-400" />
-                        <span>{acquirer.supportPhone}</span>
-                      </div>
+                      {acquirer.support_email && (
+                        <div className="flex items-center space-x-1">
+                          <Mail className="w-3 h-3 text-gray-400" />
+                          <span>{acquirer.support_email}</span>
+                        </div>
+                      )}
+                      {acquirer.support_phone && (
+                        <div className="flex items-center space-x-1">
+                          <Phone className="w-3 h-3 text-gray-400" />
+                          <span>{acquirer.support_phone}</span>
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>

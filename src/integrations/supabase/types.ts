@@ -9,7 +9,271 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      acquirers: {
+        Row: {
+          acquirer_code: string
+          bank_name: string
+          bin_ranges: string[] | null
+          country: string | null
+          created_at: string
+          currency: string | null
+          id: string
+          status: Database["public"]["Enums"]["acquirer_status"]
+          support_email: string | null
+          support_phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          acquirer_code: string
+          bank_name: string
+          bin_ranges?: string[] | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["acquirer_status"]
+          support_email?: string | null
+          support_phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          acquirer_code?: string
+          bank_name?: string
+          bin_ranges?: string[] | null
+          country?: string | null
+          created_at?: string
+          currency?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["acquirer_status"]
+          support_email?: string | null
+          support_phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      gateways: {
+        Row: {
+          auth_endpoint: string | null
+          capture_endpoint: string | null
+          code: string
+          created_at: string
+          id: string
+          name: string
+          refund_endpoint: string | null
+          sla_timeout: number | null
+          status: Database["public"]["Enums"]["gateway_status"]
+          supported_methods:
+            | Database["public"]["Enums"]["payment_method"][]
+            | null
+          updated_at: string
+        }
+        Insert: {
+          auth_endpoint?: string | null
+          capture_endpoint?: string | null
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          refund_endpoint?: string | null
+          sla_timeout?: number | null
+          status?: Database["public"]["Enums"]["gateway_status"]
+          supported_methods?:
+            | Database["public"]["Enums"]["payment_method"][]
+            | null
+          updated_at?: string
+        }
+        Update: {
+          auth_endpoint?: string | null
+          capture_endpoint?: string | null
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          refund_endpoint?: string | null
+          sla_timeout?: number | null
+          status?: Database["public"]["Enums"]["gateway_status"]
+          supported_methods?:
+            | Database["public"]["Enums"]["payment_method"][]
+            | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      merchants: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          address_line3: string | null
+          business_type: string | null
+          callback_url: string | null
+          city: string | null
+          contact_name: string | null
+          country: string | null
+          created_at: string
+          data_encryption_key: string | null
+          description: string | null
+          email_address: string | null
+          fax_number: string | null
+          id: string
+          language: string | null
+          merchant_code: string
+          merchant_id: string
+          merchant_name: string
+          mobile_number: string | null
+          payment_methods:
+            | Database["public"]["Enums"]["payment_method"][]
+            | null
+          return_url: string | null
+          state: string | null
+          status: Database["public"]["Enums"]["merchant_status"]
+          technical_contact_name: string | null
+          technical_email_address: string | null
+          technical_phone_number: string | null
+          theme: string | null
+          updated_at: string
+          web_address: string | null
+          zip_code: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          address_line3?: string | null
+          business_type?: string | null
+          callback_url?: string | null
+          city?: string | null
+          contact_name?: string | null
+          country?: string | null
+          created_at?: string
+          data_encryption_key?: string | null
+          description?: string | null
+          email_address?: string | null
+          fax_number?: string | null
+          id?: string
+          language?: string | null
+          merchant_code: string
+          merchant_id: string
+          merchant_name: string
+          mobile_number?: string | null
+          payment_methods?:
+            | Database["public"]["Enums"]["payment_method"][]
+            | null
+          return_url?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["merchant_status"]
+          technical_contact_name?: string | null
+          technical_email_address?: string | null
+          technical_phone_number?: string | null
+          theme?: string | null
+          updated_at?: string
+          web_address?: string | null
+          zip_code?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          address_line3?: string | null
+          business_type?: string | null
+          callback_url?: string | null
+          city?: string | null
+          contact_name?: string | null
+          country?: string | null
+          created_at?: string
+          data_encryption_key?: string | null
+          description?: string | null
+          email_address?: string | null
+          fax_number?: string | null
+          id?: string
+          language?: string | null
+          merchant_code?: string
+          merchant_id?: string
+          merchant_name?: string
+          mobile_number?: string | null
+          payment_methods?:
+            | Database["public"]["Enums"]["payment_method"][]
+            | null
+          return_url?: string | null
+          state?: string | null
+          status?: Database["public"]["Enums"]["merchant_status"]
+          technical_contact_name?: string | null
+          technical_email_address?: string | null
+          technical_phone_number?: string | null
+          theme?: string | null
+          updated_at?: string
+          web_address?: string | null
+          zip_code?: string | null
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          acquirer_id: string | null
+          amount: number
+          created_at: string
+          currency: string
+          customer_email: string | null
+          customer_phone: string | null
+          gateway_id: string | null
+          id: string
+          merchant_id: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"] | null
+          status: string
+          transaction_id: string
+          updated_at: string
+        }
+        Insert: {
+          acquirer_id?: string | null
+          amount: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          customer_phone?: string | null
+          gateway_id?: string | null
+          id?: string
+          merchant_id?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          status?: string
+          transaction_id: string
+          updated_at?: string
+        }
+        Update: {
+          acquirer_id?: string | null
+          amount?: number
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          customer_phone?: string | null
+          gateway_id?: string | null
+          id?: string
+          merchant_id?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          status?: string
+          transaction_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_acquirer_id_fkey"
+            columns: ["acquirer_id"]
+            isOneToOne: false
+            referencedRelation: "acquirers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_gateway_id_fkey"
+            columns: ["gateway_id"]
+            isOneToOne: false
+            referencedRelation: "gateways"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "merchants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +282,16 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      acquirer_status: "active" | "inactive" | "maintenance"
+      gateway_status: "active" | "inactive" | "maintenance"
+      merchant_status: "active" | "inactive" | "pending" | "suspended"
+      payment_method:
+        | "credit_card"
+        | "debit_card"
+        | "upi"
+        | "wallet"
+        | "net_banking"
+        | "bnpl"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +406,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      acquirer_status: ["active", "inactive", "maintenance"],
+      gateway_status: ["active", "inactive", "maintenance"],
+      merchant_status: ["active", "inactive", "pending", "suspended"],
+      payment_method: [
+        "credit_card",
+        "debit_card",
+        "upi",
+        "wallet",
+        "net_banking",
+        "bnpl",
+      ],
+    },
   },
 } as const

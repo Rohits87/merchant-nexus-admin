@@ -1,43 +1,12 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Building, Mail, Phone, MapPin } from 'lucide-react';
-
-const mockMerchants = [
-  {
-    id: '100',
-    name: 'Tech Solutions Ltd',
-    email: 'admin@techsolutions.com',
-    phone: '0553105754',
-    location: 'Abu Dhabi, UAE',
-    status: 'active',
-    lastLogin: '2024-06-14',
-    merchantCode: 'TECH001'
-  },
-  {
-    id: '101',
-    name: 'E-Commerce Store',
-    email: 'admin@ecommerce.com',
-    phone: '0501234567',
-    location: 'Dubai, UAE',
-    status: 'active',
-    lastLogin: '2024-06-13',
-    merchantCode: 'ECOM001'
-  },
-  {
-    id: '102',
-    name: 'Retail Chain',
-    email: 'admin@retailchain.com',
-    phone: '0507654321',
-    location: 'Dubai, UAE',
-    status: 'inactive',
-    lastLogin: '2024-06-10',
-    merchantCode: 'RETAIL001'
-  }
-];
+import { Building, Mail, Phone, MapPin, Loader2 } from 'lucide-react';
+import { useMerchants } from '@/hooks/useMerchants';
+import { useToast } from '@/hooks/use-toast';
 
 interface MerchantsListProps {
   onMerchantSelect: (merchantId: string) => void;
@@ -45,6 +14,25 @@ interface MerchantsListProps {
 }
 
 export const MerchantsList: React.FC<MerchantsListProps> = ({ onMerchantSelect, onNewMerchant }) => {
+  const { data: merchants, isLoading, error } = useMerchants();
+  const { toast } = useToast();
+
+  if (error) {
+    toast({
+      title: "Error",
+      description: "Failed to load merchants",
+      variant: "destructive",
+    });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -64,40 +52,44 @@ export const MerchantsList: React.FC<MerchantsListProps> = ({ onMerchantSelect, 
                 <TableHead>Code</TableHead>
                 <TableHead>Contact</TableHead>
                 <TableHead>Location</TableHead>
-                <TableHead>Last Login</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockMerchants.map((merchant) => (
+              {merchants?.map((merchant) => (
                 <TableRow key={merchant.id}>
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <Building className="w-4 h-4 text-blue-600" />
-                      <span className="font-medium">{merchant.name}</span>
+                      <span className="font-medium">{merchant.merchant_name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-gray-600">{merchant.merchantCode}</TableCell>
+                  <TableCell className="text-gray-600">{merchant.merchant_code}</TableCell>
                   <TableCell>
                     <div className="space-y-1 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <Mail className="w-3 h-3 text-gray-400" />
-                        <span>{merchant.email}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Phone className="w-3 h-3 text-gray-400" />
-                        <span>{merchant.phone}</span>
-                      </div>
+                      {merchant.email_address && (
+                        <div className="flex items-center space-x-1">
+                          <Mail className="w-3 h-3 text-gray-400" />
+                          <span>{merchant.email_address}</span>
+                        </div>
+                      )}
+                      {merchant.mobile_number && (
+                        <div className="flex items-center space-x-1">
+                          <Phone className="w-3 h-3 text-gray-400" />
+                          <span>{merchant.mobile_number}</span>
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center space-x-1 text-sm">
-                      <MapPin className="w-3 h-3 text-gray-400" />
-                      <span>{merchant.location}</span>
-                    </div>
+                    {merchant.city && merchant.country && (
+                      <div className="flex items-center space-x-1 text-sm">
+                        <MapPin className="w-3 h-3 text-gray-400" />
+                        <span>{merchant.city}, {merchant.country}</span>
+                      </div>
+                    )}
                   </TableCell>
-                  <TableCell className="text-sm text-gray-600">{merchant.lastLogin}</TableCell>
                   <TableCell>
                     <Badge variant={merchant.status === 'active' ? 'default' : 'secondary'}>
                       {merchant.status}

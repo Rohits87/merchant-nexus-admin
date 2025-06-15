@@ -1,52 +1,12 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Globe, Mail, Phone, CreditCard, Smartphone, Wallet } from 'lucide-react';
-
-const mockGateways = [
-  {
-    id: '1',
-    name: 'Stripe Gateway',
-    code: 'STRIPE',
-    supportedMethods: ['Credit Card', 'Debit Card', 'Wallet'],
-    endpoints: {
-      auth: 'https://api.stripe.com/v1/charges',
-      capture: 'https://api.stripe.com/v1/charges/:id/capture',
-      refund: 'https://api.stripe.com/v1/refunds'
-    },
-    status: 'active',
-    slaTimeout: 30
-  },
-  {
-    id: '2',
-    name: 'PayPal Gateway',
-    code: 'PAYPAL',
-    supportedMethods: ['Credit Card', 'PayPal', 'BNPL'],
-    endpoints: {
-      auth: 'https://api.paypal.com/v2/payments',
-      capture: 'https://api.paypal.com/v2/payments/:id/capture',
-      refund: 'https://api.paypal.com/v2/payments/:id/refund'
-    },
-    status: 'active',
-    slaTimeout: 45
-  },
-  {
-    id: '3',
-    name: 'Local Bank Gateway',
-    code: 'LBG',
-    supportedMethods: ['Credit Card', 'Debit Card', 'Net Banking'],
-    endpoints: {
-      auth: 'https://gateway.localbank.com/auth',
-      capture: 'https://gateway.localbank.com/capture',
-      refund: 'https://gateway.localbank.com/refund'
-    },
-    status: 'inactive',
-    slaTimeout: 60
-  }
-];
+import { Globe, CreditCard, Smartphone, Wallet, Loader2 } from 'lucide-react';
+import { useGateways } from '@/hooks/useGateways';
+import { useToast } from '@/hooks/use-toast';
 
 interface GatewaysListProps {
   onGatewaySelect: (gatewayId: string) => void;
@@ -54,15 +14,34 @@ interface GatewaysListProps {
 }
 
 export const GatewaysList: React.FC<GatewaysListProps> = ({ onGatewaySelect, onNewGateway }) => {
+  const { data: gateways, isLoading, error } = useGateways();
+  const { toast } = useToast();
+
+  if (error) {
+    toast({
+      title: "Error",
+      description: "Failed to load gateways",
+      variant: "destructive",
+    });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   const getMethodIcon = (method: string) => {
     switch (method.toLowerCase()) {
-      case 'credit card':
-      case 'debit card':
+      case 'credit_card':
+      case 'debit_card':
         return <CreditCard className="w-3 h-3" />;
       case 'upi':
         return <Smartphone className="w-3 h-3" />;
       case 'wallet':
-      case 'paypal':
+      case 'bnpl':
         return <Wallet className="w-3 h-3" />;
       default:
         return <Globe className="w-3 h-3" />;
@@ -93,7 +72,7 @@ export const GatewaysList: React.FC<GatewaysListProps> = ({ onGatewaySelect, onN
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockGateways.map((gateway) => (
+              {gateways?.map((gateway) => (
                 <TableRow key={gateway.id}>
                   <TableCell>
                     <div className="flex items-center space-x-2">
@@ -104,16 +83,16 @@ export const GatewaysList: React.FC<GatewaysListProps> = ({ onGatewaySelect, onN
                   <TableCell className="text-gray-600">{gateway.code}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {gateway.supportedMethods.map((method) => (
+                      {gateway.supported_methods?.map((method) => (
                         <div key={method} className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded text-xs">
                           {getMethodIcon(method)}
-                          <span>{method}</span>
+                          <span>{method.replace('_', ' ')}</span>
                         </div>
                       ))}
                     </div>
                   </TableCell>
                   <TableCell className="text-sm text-gray-600">
-                    {gateway.slaTimeout}s timeout
+                    {gateway.sla_timeout}s timeout
                   </TableCell>
                   <TableCell>
                     <Badge variant={gateway.status === 'active' ? 'default' : 'secondary'}>

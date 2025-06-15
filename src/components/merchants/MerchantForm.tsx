@@ -1,9 +1,13 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2 } from 'lucide-react';
+import { useMerchant } from '@/hooks/useMerchants';
+import { useToast } from '@/hooks/use-toast';
 
 interface MerchantFormProps {
   id?: string;
@@ -11,44 +15,32 @@ interface MerchantFormProps {
 
 export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
   const [activeTab, setActiveTab] = useState('institution');
+  const { data: merchant, isLoading, error } = useMerchant(id || '');
+  const { toast } = useToast();
 
-  // Mock data for demonstration
-  const merchantData = {
-    // Institution data
-    merchantId: id || 'MERCH001',
-    merchantName: 'Tech Solutions Ltd',
-    businessType: 'E-commerce',
-    merchantCode: 'TECH001',
-    description: 'Leading technology solutions provider',
-    enableStatus: 'active',
-    webAddress: 'https://techsolutions.com',
-    language: 'English',
-    
-    // Address data
-    addressLine1: '123 Business Street',
-    addressLine2: 'Suite 456',
-    addressLine3: 'Business District',
-    city: 'Dubai',
-    state: 'Dubai',
-    country: 'UAE',
-    zipCode: '12345',
-    
-    // Contact data
-    contactName: 'John Smith',
-    mobileNumber: '+971-50-123-4567',
-    faxNumber: '+971-4-123-4567',
-    emailAddress: 'contact@techsolutions.com',
-    technicalContactName: 'Jane Doe',
-    technicalPhoneNumber: '+971-50-987-6543',
-    technicalEmailAddress: 'tech@techsolutions.com',
-    
-    // Configuration data
-    dataEncryptionKey: 'ENC_KEY_2024_001',
-    returnUrl: 'https://techsolutions.com/return',
-    callbackUrl: 'https://techsolutions.com/callback',
-    paymentMethods: ['Credit Card', 'Debit Card', 'UPI', 'Wallet'],
-    theme: 'Default'
-  };
+  if (error) {
+    toast({
+      title: "Error",
+      description: "Failed to load merchant details",
+      variant: "destructive",
+    });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!merchant) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-gray-500">Merchant not found</p>
+      </div>
+    );
+  }
 
   const renderInstitutionTab = () => (
     <Card>
@@ -67,44 +59,46 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
           <TableBody>
             <TableRow>
               <TableCell className="font-medium">Merchant ID</TableCell>
-              <TableCell>{merchantData.merchantId}</TableCell>
+              <TableCell>{merchant.merchant_id}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Merchant Code</TableCell>
-              <TableCell>{merchantData.merchantCode}</TableCell>
+              <TableCell>{merchant.merchant_code}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Business Name</TableCell>
-              <TableCell>{merchantData.merchantName}</TableCell>
+              <TableCell>{merchant.merchant_name}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Business Type</TableCell>
-              <TableCell>{merchantData.businessType}</TableCell>
+              <TableCell>{merchant.business_type || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Description</TableCell>
-              <TableCell>{merchantData.description}</TableCell>
+              <TableCell>{merchant.description || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Status</TableCell>
               <TableCell>
-                <Badge variant={merchantData.enableStatus === 'active' ? 'default' : 'secondary'}>
-                  {merchantData.enableStatus}
+                <Badge variant={merchant.status === 'active' ? 'default' : 'secondary'}>
+                  {merchant.status}
                 </Badge>
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Language</TableCell>
-              <TableCell>{merchantData.language}</TableCell>
+              <TableCell>{merchant.language || 'N/A'}</TableCell>
             </TableRow>
-            <TableRow>
-              <TableCell className="font-medium">Website URL</TableCell>
-              <TableCell>
-                <a href={merchantData.webAddress} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  {merchantData.webAddress}
-                </a>
-              </TableCell>
-            </TableRow>
+            {merchant.web_address && (
+              <TableRow>
+                <TableCell className="font-medium">Website URL</TableCell>
+                <TableCell>
+                  <a href={merchant.web_address} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {merchant.web_address}
+                  </a>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>
@@ -128,31 +122,31 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
           <TableBody>
             <TableRow>
               <TableCell className="font-medium">Address Line 1</TableCell>
-              <TableCell>{merchantData.addressLine1}</TableCell>
+              <TableCell>{merchant.address_line1 || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Address Line 2</TableCell>
-              <TableCell>{merchantData.addressLine2}</TableCell>
+              <TableCell>{merchant.address_line2 || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Address Line 3</TableCell>
-              <TableCell>{merchantData.addressLine3}</TableCell>
+              <TableCell>{merchant.address_line3 || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">City</TableCell>
-              <TableCell>{merchantData.city}</TableCell>
+              <TableCell>{merchant.city || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">State/Province</TableCell>
-              <TableCell>{merchantData.state}</TableCell>
+              <TableCell>{merchant.state || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Country</TableCell>
-              <TableCell>{merchantData.country}</TableCell>
+              <TableCell>{merchant.country || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Zip/Postal Code</TableCell>
-              <TableCell>{merchantData.zipCode}</TableCell>
+              <TableCell>{merchant.zip_code || 'N/A'}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -179,22 +173,24 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">Contact Name</TableCell>
-                <TableCell>{merchantData.contactName}</TableCell>
+                <TableCell>{merchant.contact_name || 'N/A'}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Mobile Number</TableCell>
-                <TableCell>{merchantData.mobileNumber}</TableCell>
+                <TableCell>{merchant.mobile_number || 'N/A'}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Fax Number</TableCell>
-                <TableCell>{merchantData.faxNumber}</TableCell>
+                <TableCell>{merchant.fax_number || 'N/A'}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Email Address</TableCell>
                 <TableCell>
-                  <a href={`mailto:${merchantData.emailAddress}`} className="text-blue-600 hover:underline">
-                    {merchantData.emailAddress}
-                  </a>
+                  {merchant.email_address ? (
+                    <a href={`mailto:${merchant.email_address}`} className="text-blue-600 hover:underline">
+                      {merchant.email_address}
+                    </a>
+                  ) : 'N/A'}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -213,18 +209,20 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">Technical Contact Name</TableCell>
-                <TableCell>{merchantData.technicalContactName}</TableCell>
+                <TableCell>{merchant.technical_contact_name || 'N/A'}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Technical Phone Number</TableCell>
-                <TableCell>{merchantData.technicalPhoneNumber}</TableCell>
+                <TableCell>{merchant.technical_phone_number || 'N/A'}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Technical Email Address</TableCell>
                 <TableCell>
-                  <a href={`mailto:${merchantData.technicalEmailAddress}`} className="text-blue-600 hover:underline">
-                    {merchantData.technicalEmailAddress}
-                  </a>
+                  {merchant.technical_email_address ? (
+                    <a href={`mailto:${merchant.technical_email_address}`} className="text-blue-600 hover:underline">
+                      {merchant.technical_email_address}
+                    </a>
+                  ) : 'N/A'}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -251,60 +249,53 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
           <TableBody>
             <TableRow>
               <TableCell className="font-medium">Data Encryption Key</TableCell>
-              <TableCell className="font-mono text-sm">{merchantData.dataEncryptionKey}</TableCell>
+              <TableCell className="font-mono text-sm">{merchant.data_encryption_key || 'N/A'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Return URL</TableCell>
               <TableCell>
-                <a href={merchantData.returnUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  {merchantData.returnUrl}
-                </a>
+                {merchant.return_url ? (
+                  <a href={merchant.return_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {merchant.return_url}
+                  </a>
+                ) : 'N/A'}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Callback URL</TableCell>
               <TableCell>
-                <a href={merchantData.callbackUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  {merchantData.callbackUrl}
-                </a>
+                {merchant.callback_url ? (
+                  <a href={merchant.callback_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {merchant.callback_url}
+                  </a>
+                ) : 'N/A'}
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Payment Methods</TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
-                  {merchantData.paymentMethods.map((method) => (
-                    <Badge key={method} variant="outline" className="text-xs">
-                      {method}
-                    </Badge>
-                  ))}
+                  {merchant.payment_methods && merchant.payment_methods.length > 0 ? (
+                    merchant.payment_methods.map((method) => (
+                      <Badge key={method} variant="outline" className="text-xs">
+                        {method.replace('_', ' ')}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span>N/A</span>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell className="font-medium">Payment Page Theme</TableCell>
-              <TableCell>{merchantData.theme}</TableCell>
+              <TableCell>{merchant.theme || 'N/A'}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </CardContent>
     </Card>
   );
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'institution':
-        return renderInstitutionTab();
-      case 'address':
-        return renderAddressTab();
-      case 'contact':
-        return renderContactTab();
-      case 'configuration':
-        return renderConfigurationTab();
-      default:
-        return renderInstitutionTab();
-    }
-  };
 
   return (
     <div className="space-y-6">
