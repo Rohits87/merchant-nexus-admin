@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,10 +9,15 @@ import { useToast } from '@/hooks/use-toast';
 
 interface MerchantsListProps {
   onMerchantSelect: (merchantId: string) => void;
+  onMerchantEdit: (merchantId: string) => void;
   onNewMerchant: () => void;
 }
 
-export const MerchantsList: React.FC<MerchantsListProps> = ({ onMerchantSelect, onNewMerchant }) => {
+export const MerchantsList: React.FC<MerchantsListProps> = ({ 
+  onMerchantSelect, 
+  onMerchantEdit, 
+  onNewMerchant 
+}) => {
   const { data: merchants, isLoading, error } = useMerchants();
   const { toast } = useToast();
 
@@ -106,9 +110,9 @@ export const MerchantsList: React.FC<MerchantsListProps> = ({ onMerchantSelect, 
                       </Button>
                       <Button 
                         size="sm"
-                        onClick={() => onMerchantSelect(merchant.id)}
+                        onClick={() => onMerchantEdit(merchant.id)}
                       >
-                        Configure
+                        Edit
                       </Button>
                     </div>
                   </TableCell>

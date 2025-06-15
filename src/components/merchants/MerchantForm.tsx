@@ -5,15 +5,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Edit, ArrowLeft } from 'lucide-react';
 import { useMerchant } from '@/hooks/useMerchants';
 import { useToast } from '@/hooks/use-toast';
 
 interface MerchantFormProps {
   id?: string;
+  onEdit?: () => void;
+  onBack?: () => void;
 }
 
-export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
+export const MerchantForm: React.FC<MerchantFormProps> = ({ id, onEdit, onBack }) => {
   const [activeTab, setActiveTab] = useState('institution');
   const { data: merchant, isLoading, error } = useMerchant(id || '');
   const { toast } = useToast();
@@ -299,6 +301,15 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
 
   return (
     <div className="space-y-6">
+      {onBack && (
+        <div className="flex items-center space-x-4">
+          <Button variant="outline" onClick={onBack}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to List
+          </Button>
+        </div>
+      )}
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="institution">Institution</TabsTrigger>
@@ -321,8 +332,13 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ id }) => {
       </Tabs>
       
       <div className="flex justify-end space-x-4">
-        <Button variant="outline">Edit</Button>
-        <Button>Export</Button>
+        {onEdit && (
+          <Button onClick={onEdit}>
+            <Edit className="w-4 h-4 mr-2" />
+            Edit
+          </Button>
+        )}
+        <Button variant="outline">Export</Button>
       </div>
     </div>
   );

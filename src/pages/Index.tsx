@@ -4,6 +4,7 @@ import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
 import { MerchantsList } from '@/components/merchants/MerchantsList';
 import { MerchantForm } from '@/components/merchants/MerchantForm';
+import { MerchantFormEdit } from '@/components/merchants/MerchantFormEdit';
 import { AcquirersList } from '@/components/acquirers/AcquirersList';
 import { AcquirerForm } from '@/components/acquirers/AcquirerForm';
 import { GatewaysList } from '@/components/gateways/GatewaysList';
