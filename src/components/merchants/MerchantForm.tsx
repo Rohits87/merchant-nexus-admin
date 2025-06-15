@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,14 +6,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 
 interface MerchantFormProps {
-  merchantId?: string;
+  activeTab: string;
 }
 
-export const MerchantForm: React.FC<MerchantFormProps> = ({ merchantId }) => {
+export const MerchantForm: React.FC<MerchantFormProps> = ({ activeTab }) => {
   // Mock data for demonstration
   const merchantData = {
     // Institution data
-    merchantId: merchantId || 'MERCH001',
+    merchantId: 'MERCH001',
     merchantName: 'Tech Solutions Ltd',
     businessType: 'E-commerce',
     merchantCode: 'TECH001',
@@ -289,19 +290,18 @@ export const MerchantForm: React.FC<MerchantFormProps> = ({ merchantId }) => {
   );
 
   const renderContent = () => {
-    // switch (activeTab) { // activeTab is not a prop anymore
-    //   case 'institution':
-    //     return renderInstitutionTab();
-    //   case 'address':
-    //     return renderAddressTab();
-    //   case 'contact':
-    //     return renderContactTab();
-    //   case 'configuration':
-    //     return renderConfigurationTab();
-    //   default:
-    //     return renderInstitutionTab();
-    // }
-    return renderInstitutionTab(); // Just render institution tab for now
+    switch (activeTab) {
+      case 'institution':
+        return renderInstitutionTab();
+      case 'address':
+        return renderAddressTab();
+      case 'contact':
+        return renderContactTab();
+      case 'configuration':
+        return renderConfigurationTab();
+      default:
+        return renderInstitutionTab();
+    }
   };
 
   return (

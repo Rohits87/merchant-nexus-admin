@@ -3,7 +3,6 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Globe, Mail, Phone, CreditCard, Smartphone, Wallet } from 'lucide-react';
 
 const mockGateways = [
@@ -79,70 +78,57 @@ export const GatewaysList: React.FC<GatewaysListProps> = ({ onGatewaySelect, onN
         <Button onClick={onNewGateway}>Add New Gateway</Button>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Gateway</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead>Supported Methods</TableHead>
-                <TableHead>SLA</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockGateways.map((gateway) => (
-                <TableRow key={gateway.id}>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Globe className="w-4 h-4 text-purple-600" />
-                      <span className="font-medium">{gateway.name}</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {mockGateways.map((gateway) => (
+          <Card key={gateway.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Globe className="w-5 h-5 text-purple-600" />
+                  <CardTitle className="text-lg">{gateway.name}</CardTitle>
+                </div>
+                <Badge variant={gateway.status === 'active' ? 'default' : 'secondary'}>
+                  {gateway.status}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-500">Code: {gateway.code}</p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-600">Supported Methods:</p>
+                <div className="flex flex-wrap gap-1">
+                  {gateway.supportedMethods.map((method) => (
+                    <div key={method} className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded text-xs">
+                      {getMethodIcon(method)}
+                      <span>{method}</span>
                     </div>
-                  </TableCell>
-                  <TableCell className="text-gray-600">{gateway.code}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {gateway.supportedMethods.map((method) => (
-                        <div key={method} className="flex items-center space-x-1 bg-gray-100 px-2 py-1 rounded text-xs">
-                          {getMethodIcon(method)}
-                          <span>{method}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-600">
-                    {gateway.slaTimeout}s timeout
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={gateway.status === 'active' ? 'default' : 'secondary'}>
-                      {gateway.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => onGatewaySelect(gateway.id)}
-                      >
-                        View Details
-                      </Button>
-                      <Button 
-                        size="sm"
-                        onClick={() => onGatewaySelect(gateway.id)}
-                      >
-                        Configure
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                  ))}
+                </div>
+              </div>
+              <div className="text-sm text-gray-600">
+                <p>SLA: {gateway.slaTimeout}s timeout</p>
+              </div>
+              <div className="pt-3 border-t">
+                <div className="flex space-x-2">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => onGatewaySelect(gateway.id)}
+                  >
+                    View Details
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => onGatewaySelect(gateway.id)}
+                  >
+                    Configure
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

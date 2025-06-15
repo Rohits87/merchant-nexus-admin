@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,10 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface AcquirerFormProps {
-  acquirerId?: string;
+  activeTab: string;
 }
 
-export const AcquirerForm: React.FC<AcquirerFormProps> = ({ acquirerId }) => {
+export const AcquirerForm: React.FC<AcquirerFormProps> = ({ activeTab }) => {
   const [formData, setFormData] = useState({
     bankName: '',
     acquirerCode: '',
@@ -129,9 +130,138 @@ export const AcquirerForm: React.FC<AcquirerFormProps> = ({ acquirerId }) => {
     </Card>
   );
 
+  const renderDetailsTab = () => (
+    <Card>
+      <CardHeader>
+        <CardTitle>Contact & Support Information</CardTitle>
+        <CardDescription>Configure support and contact details for the acquirer</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">Support Contact</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="supportEmail">Support Email</Label>
+              <Input
+                id="supportEmail"
+                type="email"
+                value={formData.supportEmail}
+                onChange={(e) => handleInputChange('supportEmail', e.target.value)}
+                placeholder="support@bank.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="supportPhone">Support Phone</Label>
+              <Input
+                id="supportPhone"
+                value={formData.supportPhone}
+                onChange={(e) => handleInputChange('supportPhone', e.target.value)}
+                placeholder="+971-4-123-4567"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">Technical Contact</h3>
+          <div className="grid grid-cols-1 md:grid-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="technicalContact">Technical Contact Name</Label>
+              <Input
+                id="technicalContact"
+                value={formData.technicalContact}
+                onChange={(e) => handleInputChange('technicalContact', e.target.value)}
+                placeholder="Technical contact name"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="technicalEmail">Technical Email</Label>
+              <Input
+                id="technicalEmail"
+                type="email"
+                value={formData.technicalEmail}
+                onChange={(e) => handleInputChange('technicalEmail', e.target.value)}
+                placeholder="tech@bank.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="technicalPhone">Technical Phone</Label>
+              <Input
+                id="technicalPhone"
+                value={formData.technicalPhone}
+                onChange={(e) => handleInputChange('technicalPhone', e.target.value)}
+                placeholder="+971-4-123-4567"
+              />
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderTechnicalInfoTab = () => (
+    <Card>
+      <CardHeader>
+        <CardTitle>Technical Configuration</CardTitle>
+        <CardDescription>Configure technical settings and SLA parameters</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="slaResponse">SLA Response Time (seconds)</Label>
+            <Input
+              id="slaResponse"
+              type="number"
+              value={formData.slaResponse}
+              onChange={(e) => handleInputChange('slaResponse', e.target.value)}
+              placeholder="30"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="timeoutValue">Timeout Value (seconds)</Label>
+            <Input
+              id="timeoutValue"
+              type="number"
+              value={formData.timeoutValue}
+              onChange={(e) => handleInputChange('timeoutValue', e.target.value)}
+              placeholder="60"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">Supported Features</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {['Authorization', 'Capture', 'Refund', 'Void', 'Recurring', 'Tokenization'].map((feature) => (
+              <div key={feature} className="flex items-center space-x-2">
+                <input type="checkbox" id={feature} className="rounded" />
+                <Label htmlFor={feature}>{feature}</Label>
+              </div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return renderOverviewTab();
+      case 'details':
+        return renderDetailsTab();
+      case 'technical-info':
+        return renderTechnicalInfoTab();
+      default:
+        return renderOverviewTab();
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {renderOverviewTab()}
+      {renderContent()}
       
       <div className="flex justify-end space-x-4">
         <Button variant="outline">Cancel</Button>

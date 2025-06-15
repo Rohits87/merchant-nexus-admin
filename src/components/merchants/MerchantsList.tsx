@@ -3,7 +3,6 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Building, Mail, Phone, MapPin } from 'lucide-react';
 
 const mockMerchants = [
@@ -55,77 +54,56 @@ export const MerchantsList: React.FC<MerchantsListProps> = ({ onMerchantSelect, 
         <Button onClick={onNewMerchant}>Add New Merchant</Button>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Merchant</TableHead>
-                <TableHead>Code</TableHead>
-                <TableHead>Contact</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Last Login</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockMerchants.map((merchant) => (
-                <TableRow key={merchant.id}>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <Building className="w-4 h-4 text-blue-600" />
-                      <span className="font-medium">{merchant.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-gray-600">{merchant.merchantCode}</TableCell>
-                  <TableCell>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex items-center space-x-1">
-                        <Mail className="w-3 h-3 text-gray-400" />
-                        <span>{merchant.email}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Phone className="w-3 h-3 text-gray-400" />
-                        <span>{merchant.phone}</span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-1 text-sm">
-                      <MapPin className="w-3 h-3 text-gray-400" />
-                      <span>{merchant.location}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-gray-600">{merchant.lastLogin}</TableCell>
-                  <TableCell>
-                    <Badge variant={merchant.status === 'active' ? 'default' : 'secondary'}>
-                      {merchant.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => onMerchantSelect(merchant.id)}
-                      >
-                        View Details
-                      </Button>
-                      <Button 
-                        size="sm"
-                        onClick={() => onMerchantSelect(merchant.id)}
-                      >
-                        Configure
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {mockMerchants.map((merchant) => (
+          <Card key={merchant.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Building className="w-5 h-5 text-blue-600" />
+                  <CardTitle className="text-lg">{merchant.name}</CardTitle>
+                </div>
+                <Badge variant={merchant.status === 'active' ? 'default' : 'secondary'}>
+                  {merchant.status}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-500">Code: {merchant.merchantCode}</p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Mail className="w-4 h-4" />
+                <span>{merchant.email}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Phone className="w-4 h-4" />
+                <span>{merchant.phone}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <MapPin className="w-4 h-4" />
+                <span>{merchant.location}</span>
+              </div>
+              <div className="pt-3 border-t">
+                <p className="text-xs text-gray-500">Last login: {merchant.lastLogin}</p>
+                <div className="flex space-x-2 mt-3">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => onMerchantSelect(merchant.id)}
+                  >
+                    View Details
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => onMerchantSelect(merchant.id)}
+                  >
+                    Configure
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };

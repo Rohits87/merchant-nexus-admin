@@ -21,12 +21,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   onTopNavChange
 }) => {
   return (
-    <div className="min-h-screen bg-gray-50 flex w-full">
+    <div className="min-h-screen bg-gray-50 flex">
       <Sidebar 
         currentSection={currentSection}
         onSectionChange={onSectionChange}
       />
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col">
         {topNavItems && (
           <TopNavigation 
             items={topNavItems}
@@ -34,7 +34,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             onItemChange={onTopNavChange}
           />
         )}
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-6">
           {children}
         </main>
       </div>
