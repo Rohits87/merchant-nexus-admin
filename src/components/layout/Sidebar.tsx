@@ -27,7 +27,6 @@ import {
   FileText,
   ArrowDown,
   ArrowUp,
-  Plus,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -83,7 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Merchants Group */}
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  isActive={isSubActive(['all-merchants', 'pricing-configuration', 'terminal-configuration', 'merchant-form-new'])}
+                  isActive={isSubActive(['all-merchants', 'pricing-configuration', 'terminal-configuration'])}
                   onClick={() => setOpenMerchants((o) => !o)}
                 >
                   <Building className="w-5 h-5" />
@@ -99,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
                         isActive={currentSection === 'all-merchants'}
-                        onClick={() => onSectionChange('all-merchants', 'merchants')}
+                        onClick={() => onSectionChange('all-merchants')}
                       >
                         All Merchants
                       </SidebarMenuSubButton>
@@ -107,7 +106,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
                         isActive={currentSection === 'pricing-configuration'}
-                        onClick={() => onSectionChange('pricing-configuration', 'merchants')}
+                        onClick={() => onSectionChange('pricing-configuration')}
                       >
                         Pricing Configuration
                       </SidebarMenuSubButton>
@@ -115,19 +114,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
                         isActive={currentSection === 'terminal-configuration'}
-                        onClick={() => onSectionChange('terminal-configuration', 'merchants')}
+                        onClick={() => onSectionChange('terminal-configuration')}
                       >
                         Terminal Configuration
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    {/* Add New Merchant */}
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        isActive={currentSection === 'merchant-form-new'}
-                        onClick={() => onSectionChange('merchant-form-new', 'merchants')}
-                        className="text-green-700 font-semibold"
-                      >
-                        <Plus className="w-4 h-4 mr-1" /> New Merchant
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   </SidebarMenuSub>
@@ -137,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* PG Config Group */}
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  isActive={isSubActive(['acquirer-banks', 'payment-gateways', 'gateway-form-new'])}
+                  isActive={isSubActive(['acquirer-banks', 'payment-gateways'])}
                   onClick={() => setOpenPG((o) => !o)}
                 >
                   <BarChart3 className="w-5 h-5" />
@@ -153,7 +142,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
                         isActive={currentSection === 'acquirer-banks'}
-                        onClick={() => onSectionChange('acquirer-banks', 'pg-config')}
+                        onClick={() => onSectionChange('acquirer-banks')}
                       >
                         <Landmark className="w-4 h-4 mr-1" />
                         Acquirer Banks
@@ -162,20 +151,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
                         isActive={currentSection === 'payment-gateways'}
-                        onClick={() => onSectionChange('payment-gateways', 'pg-config')}
+                        onClick={() => onSectionChange('payment-gateways')}
                       >
                         <Globe className="w-4 h-4 mr-1" />
                         Payment Gateways
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    {/* Add New PG/Gateway */}
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton
-                        isActive={currentSection === 'gateway-form-new'}
-                        onClick={() => onSectionChange('gateway-form-new', 'pg-config')}
-                        className="text-green-700 font-semibold"
-                      >
-                        <Plus className="w-4 h-4 mr-1" /> New Gateway
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   </SidebarMenuSub>

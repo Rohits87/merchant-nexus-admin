@@ -24,10 +24,8 @@ const sectionLabels: Record<string, string> = {
   'all-merchants': 'All Merchants',
   'pricing-configuration': 'Pricing Configuration',
   'terminal-configuration': 'Terminal Configuration',
-  'merchant-form-new': 'New Merchant',
   'acquirer-banks': 'Acquirer Banks',
   'payment-gateways': 'Payment Gateways',
-  'gateway-form-new': 'New Gateway',
   'gateway-mapping': 'Gateway Mapping',
   'users': 'Users & Access',
   'audit-logs': 'Audit Logs',
@@ -41,8 +39,8 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [activeTopNav, setActiveTopNav] = useState('overview');
 
-  const handleSectionChange = (section: string, parentId?: string) => {
-    console.log('Section change requested:', section, 'Parent:', parentId);
+  const handleSectionChange = (section: string) => {
+    console.log('Section change requested:', section);
     
     const tabId = section;
     const existingTab = openTabs.find(tab => tab.id === tabId);
@@ -90,7 +88,7 @@ const Index = () => {
       const newTab: TabItem = {
         id: tabId,
         label: 'New Merchant',
-        section: 'merchant-form-new',
+        section: 'all-merchants',
         isForm: true,
         formActiveTab: activeTopNav
       };
@@ -166,7 +164,7 @@ const Index = () => {
       const newTab: TabItem = {
         id: tabId,
         label: 'New Gateway',
-        section: 'gateway-form-new',
+        section: 'payment-gateways',
         isForm: true,
         formActiveTab: activeTopNav
       };
@@ -210,23 +208,23 @@ const Index = () => {
         return <DashboardOverview />;
         
       case 'all-merchants':
+        if (tab.id === 'merchant-form-new') {
+          return (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">New Merchant</h2>
+              </div>
+              <div className="bg-white rounded-lg border p-6">
+                <p className="text-gray-600">Merchant form will be implemented here.</p>
+              </div>
+            </div>
+          );
+        }
         return (
           <MerchantsList 
             onMerchantSelect={handleMerchantSelect}
             onNewMerchant={handleNewMerchant}
           />
-        );
-        
-      case 'merchant-form-new':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">New Merchant</h2>
-            </div>
-            <div className="bg-white rounded-lg border p-6">
-              <p className="text-gray-600">Merchant form will be implemented here.</p>
-            </div>
-          </div>
         );
         
       case 'pricing-configuration':
@@ -254,6 +252,18 @@ const Index = () => {
         );
         
       case 'acquirer-banks':
+        if (tab.id === 'acquirer-form-new') {
+          return (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">New Acquirer</h2>
+              </div>
+              <div className="bg-white rounded-lg border p-6">
+                <p className="text-gray-600">Acquirer form will be implemented here.</p>
+              </div>
+            </div>
+          );
+        }
         return (
           <AcquirersList 
             onAcquirerSelect={handleAcquirerSelect}
@@ -262,23 +272,23 @@ const Index = () => {
         );
         
       case 'payment-gateways':
+        if (tab.id === 'gateway-form-new') {
+          return (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-gray-900">New Gateway</h2>
+              </div>
+              <div className="bg-white rounded-lg border p-6">
+                <p className="text-gray-600">Gateway form will be implemented here.</p>
+              </div>
+            </div>
+          );
+        }
         return (
           <GatewaysList 
             onGatewaySelect={handleGatewaySelect}
             onNewGateway={handleNewGateway}
           />
-        );
-        
-      case 'gateway-form-new':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-900">New Gateway</h2>
-            </div>
-            <div className="bg-white rounded-lg border p-6">
-              <p className="text-gray-600">Gateway form will be implemented here.</p>
-            </div>
-          </div>
         );
         
       case 'gateway-mapping':
