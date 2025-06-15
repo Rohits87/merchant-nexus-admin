@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Landmark, Mail, Phone, MapPin, CreditCard } from 'lucide-react';
 
 const mockAcquirers = [
@@ -57,59 +58,82 @@ export const AcquirersList: React.FC<AcquirersListProps> = ({ onAcquirerSelect, 
         <Button onClick={onNewAcquirer}>Add New Acquirer</Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockAcquirers.map((acquirer) => (
-          <Card key={acquirer.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Landmark className="w-5 h-5 text-green-600" />
-                  <CardTitle className="text-lg">{acquirer.bankName}</CardTitle>
-                </div>
-                <Badge variant={acquirer.status === 'active' ? 'default' : 'secondary'}>
-                  {acquirer.status}
-                </Badge>
-              </div>
-              <p className="text-sm text-gray-500">Code: {acquirer.acquirerCode}</p>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <CreditCard className="w-4 h-4" />
-                <span>BIN: {acquirer.binRanges.join(', ')}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <MapPin className="w-4 h-4" />
-                <span>{acquirer.country} - {acquirer.currency}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Mail className="w-4 h-4" />
-                <span>{acquirer.supportEmail}</span>
-              </div>
-              <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <Phone className="w-4 h-4" />
-                <span>{acquirer.supportPhone}</span>
-              </div>
-              <div className="pt-3 border-t">
-                <div className="flex space-x-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={() => onAcquirerSelect(acquirer.id)}
-                  >
-                    View Details
-                  </Button>
-                  <Button 
-                    size="sm"
-                    onClick={() => onAcquirerSelect(acquirer.id)}
-                  >
-                    Configure
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Bank</TableHead>
+                <TableHead>Code</TableHead>
+                <TableHead>BIN Ranges</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Contact</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {mockAcquirers.map((acquirer) => (
+                <TableRow key={acquirer.id}>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <Landmark className="w-4 h-4 text-green-600" />
+                      <span className="font-medium">{acquirer.bankName}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-gray-600">{acquirer.acquirerCode}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1 text-sm">
+                      <CreditCard className="w-3 h-3 text-gray-400" />
+                      <span>{acquirer.binRanges.join(', ')}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-1 text-sm">
+                      <MapPin className="w-3 h-3 text-gray-400" />
+                      <span>{acquirer.country} - {acquirer.currency}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex items-center space-x-1">
+                        <Mail className="w-3 h-3 text-gray-400" />
+                        <span>{acquirer.supportEmail}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Phone className="w-3 h-3 text-gray-400" />
+                        <span>{acquirer.supportPhone}</span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={acquirer.status === 'active' ? 'default' : 'secondary'}>
+                      {acquirer.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => onAcquirerSelect(acquirer.id)}
+                      >
+                        View Details
+                      </Button>
+                      <Button 
+                        size="sm"
+                        onClick={() => onAcquirerSelect(acquirer.id)}
+                      >
+                        Configure
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };
