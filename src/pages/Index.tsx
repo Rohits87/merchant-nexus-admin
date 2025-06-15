@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
@@ -19,6 +18,19 @@ interface TabItem {
   formActiveTab?: string;
 }
 
+const sectionLabels: Record<string, string> = {
+  'dashboard': 'Dashboard',
+  'all-merchants': 'All Merchants',
+  'pricing-configuration': 'Pricing Configuration',
+  'terminal-configuration': 'Terminal Configuration',
+  'acquirer-banks': 'Acquirer Banks',
+  'payment-gateways': 'Payment Gateways',
+  'gateway-mapping': 'Gateway Mapping',
+  'users': 'Users & Access',
+  'audit-logs': 'Audit Logs',
+  'settings': 'Settings'
+};
+
 const Index = () => {
   const [openTabs, setOpenTabs] = useState<TabItem[]>([
     { id: 'dashboard', label: 'Dashboard', section: 'dashboard' }
@@ -26,33 +38,20 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [activeTopNav, setActiveTopNav] = useState('overview');
 
-  const getSectionLabel = (section: string) => {
-    const labels: Record<string, string> = {
-      'dashboard': 'Dashboard',
-      'merchants': 'Merchants',
-      'acquirer-banks': 'Acquirer Banks',
-      'payment-gateways': 'Payment Gateways',
-      'gateway-mapping': 'Gateway Mapping',
-      'users': 'Users & Access',
-      'audit-logs': 'Audit Logs',
-      'settings': 'Settings'
-    };
-    return labels[section] || section;
-  };
+  const handleSectionChange = (section: string, parentId?: string) => {
+    const tabId = section;
 
-  const handleSectionChange = (section: string) => {
-    const existingTab = openTabs.find(tab => tab.section === section && !tab.isForm);
-    
+    const existingTab = openTabs.find(tab => tab.id === tabId);
     if (existingTab) {
-      setActiveTab(existingTab.id);
+      setActiveTab(tabId);
     } else {
       const newTab: TabItem = {
-        id: section,
-        label: getSectionLabel(section),
+        id: tabId,
+        label: sectionLabels[section] || section,
         section: section
       };
       setOpenTabs(prev => [...prev, newTab]);
-      setActiveTab(newTab.id);
+      setActiveTab(tabId);
     }
     setActiveTopNav('overview');
   };
@@ -171,15 +170,7 @@ const Index = () => {
     }
   };
 
-  const closeTab = (tabId: string) => {
-    const newTabs = openTabs.filter(tab => tab.id !== tabId);
-    setOpenTabs(newTabs);
-    
-    if (activeTab === tabId) {
-      const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : 'dashboard';
-      setActiveTab(newActiveTab);
-    }
-  };
+  const getSectionLabel = (section: string) => sectionLabels[section] || section;
 
   const merchantTopNavItems = [
     { id: 'institution', label: 'Institution' },
@@ -206,58 +197,64 @@ const Index = () => {
 
   const getTopNavItems = () => {
     const currentTab = getCurrentTab();
-    if (!currentTab?.isForm) return undefined;
-
-    if (currentTab.section === 'merchants') {
-      return merchantTopNavItems;
+    if (!currentTab) return undefined;
+    switch (currentTab.section) {
+      case 'all-merchants':
+      case 'pricing-configuration':
+      case 'terminal-configuration':
+        return undefined;
+      case 'acquirer-banks':
+        return acquirerTopNavItems;
+      case 'payment-gateways':
+        return gatewayTopNavItems;
+      default:
+        return undefined;
     }
-    if (currentTab.section === 'acquirer-banks') {
-      return acquirerTopNavItems;
-    }
-    if (currentTab.section === 'payment-gateways') {
-      return gatewayTopNavItems;
-    }
-    return undefined;
   };
 
   const renderTabContent = (tab: TabItem) => {
     switch (tab.section) {
       case 'dashboard':
         return <DashboardOverview />;
-      
-      case 'merchants':
-        if (tab.isForm) {
-          return <MerchantForm activeTab={activeTopNav} />;
-        }
+      case 'all-merchants':
         return (
           <MerchantsList 
             onMerchantSelect={handleMerchantSelect}
             onNewMerchant={handleNewMerchant}
           />
         );
-      
+      case 'pricing-configuration':
+        return (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Pricing Configuration</h3>
+              <p className="text-gray-600">Configure pricing settings for merchants here.</p>
+            </div>
+          </div>
+        );
+      case 'terminal-configuration':
+        return (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Terminal Configuration</h3>
+              <p className="text-gray-600">Configure terminal and POS settings.</p>
+            </div>
+          </div>
+        );
       case 'acquirer-banks':
-        if (tab.isForm) {
-          return <AcquirerForm activeTab={activeTopNav} />;
-        }
         return (
           <AcquirersList 
             onAcquirerSelect={handleAcquirerSelect}
             onNewAcquirer={handleNewAcquirer}
           />
         );
-      
       case 'payment-gateways':
-        if (tab.isForm) {
-          return <GatewayForm activeTab={activeTopNav} />;
-        }
         return (
           <GatewaysList 
             onGatewaySelect={handleGatewaySelect}
             onNewGateway={handleNewGateway}
           />
         );
-      
       case 'gateway-mapping':
         return (
           <div className="flex items-center justify-center h-64">
@@ -267,7 +264,6 @@ const Index = () => {
             </div>
           </div>
         );
-      
       case 'users':
         return (
           <div className="flex items-center justify-center h-64">
@@ -277,7 +273,6 @@ const Index = () => {
             </div>
           </div>
         );
-      
       case 'audit-logs':
         return (
           <div className="flex items-center justify-center h-64">
@@ -287,7 +282,6 @@ const Index = () => {
             </div>
           </div>
         );
-      
       default:
         return (
           <div className="flex items-center justify-center h-64">
@@ -325,7 +319,12 @@ const Index = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      closeTab(tab.id);
+                      const newTabs = openTabs.filter(t => t.id !== tab.id);
+                      setOpenTabs(newTabs);
+                      if (activeTab === tab.id) {
+                        const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : 'dashboard';
+                        setActiveTab(newActiveTab);
+                      }
                     }}
                     className="ml-1 p-1 hover:bg-gray-200 rounded"
                   >
@@ -335,7 +334,6 @@ const Index = () => {
               </div>
             ))}
           </TabsList>
-          
           {openTabs.map((tab) => (
             <TabsContent key={tab.id} value={tab.id} className="flex-1 mt-0">
               {renderTabContent(tab)}
