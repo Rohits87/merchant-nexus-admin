@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardOverview } from '@/components/dashboard/DashboardOverview';
@@ -23,8 +24,10 @@ const sectionLabels: Record<string, string> = {
   'all-merchants': 'All Merchants',
   'pricing-configuration': 'Pricing Configuration',
   'terminal-configuration': 'Terminal Configuration',
+  'merchant-form-new': 'New Merchant',
   'acquirer-banks': 'Acquirer Banks',
   'payment-gateways': 'Payment Gateways',
+  'gateway-form-new': 'New Gateway',
   'gateway-mapping': 'Gateway Mapping',
   'users': 'Users & Access',
   'audit-logs': 'Audit Logs',
@@ -39,9 +42,11 @@ const Index = () => {
   const [activeTopNav, setActiveTopNav] = useState('overview');
 
   const handleSectionChange = (section: string, parentId?: string) => {
+    console.log('Section change requested:', section, 'Parent:', parentId);
+    
     const tabId = section;
-
     const existingTab = openTabs.find(tab => tab.id === tabId);
+    
     if (existingTab) {
       setActiveTab(tabId);
     } else {
@@ -85,7 +90,7 @@ const Index = () => {
       const newTab: TabItem = {
         id: tabId,
         label: 'New Merchant',
-        section: 'merchants',
+        section: 'merchant-form-new',
         isForm: true,
         formActiveTab: activeTopNav
       };
@@ -161,7 +166,7 @@ const Index = () => {
       const newTab: TabItem = {
         id: tabId,
         label: 'New Gateway',
-        section: 'payment-gateways',
+        section: 'gateway-form-new',
         isForm: true,
         formActiveTab: activeTopNav
       };
@@ -170,27 +175,6 @@ const Index = () => {
     }
   };
 
-  const getSectionLabel = (section: string) => sectionLabels[section] || section;
-
-  const merchantTopNavItems = [
-    { id: 'institution', label: 'Institution' },
-    { id: 'address', label: 'Address' },
-    { id: 'contact', label: 'Contact' },
-    { id: 'configuration', label: 'Configuration' }
-  ];
-
-  const acquirerTopNavItems = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'details', label: 'Details' },
-    { id: 'technical-info', label: 'Technical Info' }
-  ];
-
-  const gatewayTopNavItems = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'details', label: 'Details' },
-    { id: 'technical-info', label: 'Technical Info' }
-  ];
-
   const getCurrentTab = () => {
     return openTabs.find(tab => tab.id === activeTab);
   };
@@ -198,24 +182,33 @@ const Index = () => {
   const getTopNavItems = () => {
     const currentTab = getCurrentTab();
     if (!currentTab) return undefined;
+    
+    // Only show top nav for specific sections
     switch (currentTab.section) {
-      case 'all-merchants':
-      case 'pricing-configuration':
-      case 'terminal-configuration':
-        return undefined;
       case 'acquirer-banks':
-        return acquirerTopNavItems;
+        return [
+          { id: 'overview', label: 'Overview' },
+          { id: 'details', label: 'Details' },
+          { id: 'technical-info', label: 'Technical Info' }
+        ];
       case 'payment-gateways':
-        return gatewayTopNavItems;
+        return [
+          { id: 'overview', label: 'Overview' },
+          { id: 'details', label: 'Details' },
+          { id: 'technical-info', label: 'Technical Info' }
+        ];
       default:
         return undefined;
     }
   };
 
   const renderTabContent = (tab: TabItem) => {
+    console.log('Rendering tab content for:', tab.section, tab.id);
+    
     switch (tab.section) {
       case 'dashboard':
         return <DashboardOverview />;
+        
       case 'all-merchants':
         return (
           <MerchantsList 
@@ -223,24 +216,43 @@ const Index = () => {
             onNewMerchant={handleNewMerchant}
           />
         );
+        
+      case 'merchant-form-new':
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">New Merchant</h2>
+            </div>
+            <div className="bg-white rounded-lg border p-6">
+              <p className="text-gray-600">Merchant form will be implemented here.</p>
+            </div>
+          </div>
+        );
+        
       case 'pricing-configuration':
         return (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Pricing Configuration</h3>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Pricing Configuration</h2>
+            </div>
+            <div className="bg-white rounded-lg border p-6">
               <p className="text-gray-600">Configure pricing settings for merchants here.</p>
             </div>
           </div>
         );
+        
       case 'terminal-configuration':
         return (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Terminal Configuration</h3>
-              <p className="text-gray-600">Configure terminal and POS settings.</p>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Terminal Configuration</h2>
+            </div>
+            <div className="bg-white rounded-lg border p-6">
+              <p className="text-gray-600">Configure terminal and POS settings here.</p>
             </div>
           </div>
         );
+        
       case 'acquirer-banks':
         return (
           <AcquirersList 
@@ -248,6 +260,7 @@ const Index = () => {
             onNewAcquirer={handleNewAcquirer}
           />
         );
+        
       case 'payment-gateways':
         return (
           <GatewaysList 
@@ -255,33 +268,67 @@ const Index = () => {
             onNewGateway={handleNewGateway}
           />
         );
+        
+      case 'gateway-form-new':
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">New Gateway</h2>
+            </div>
+            <div className="bg-white rounded-lg border p-6">
+              <p className="text-gray-600">Gateway form will be implemented here.</p>
+            </div>
+          </div>
+        );
+        
       case 'gateway-mapping':
         return (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Gateway-Acquirer Mapping</h3>
-              <p className="text-gray-600">Configure routing rules between gateways and acquirers</p>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Gateway-Acquirer Mapping</h2>
+            </div>
+            <div className="bg-white rounded-lg border p-6">
+              <p className="text-gray-600">Configure routing rules between gateways and acquirers here.</p>
             </div>
           </div>
         );
+        
       case 'users':
         return (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Users & Access Control</h3>
-              <p className="text-gray-600">Manage user roles and permissions</p>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Users & Access Control</h2>
+            </div>
+            <div className="bg-white rounded-lg border p-6">
+              <p className="text-gray-600">Manage user roles and permissions here.</p>
             </div>
           </div>
         );
+        
       case 'audit-logs':
         return (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Audit Logs</h3>
-              <p className="text-gray-600">View system activity and change history</p>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Audit Logs</h2>
+            </div>
+            <div className="bg-white rounded-lg border p-6">
+              <p className="text-gray-600">View system activity and change history here.</p>
             </div>
           </div>
         );
+        
+      case 'settings':
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">Settings</h2>
+            </div>
+            <div className="bg-white rounded-lg border p-6">
+              <p className="text-gray-600">System settings and configuration options.</p>
+            </div>
+          </div>
+        );
+        
       default:
         return (
           <div className="flex items-center justify-center h-64">
@@ -293,6 +340,18 @@ const Index = () => {
             </div>
           </div>
         );
+    }
+  };
+
+  const handleTabClose = (tabId: string) => {
+    if (tabId === 'dashboard') return; // Don't allow closing dashboard
+    
+    const newTabs = openTabs.filter(t => t.id !== tabId);
+    setOpenTabs(newTabs);
+    
+    if (activeTab === tabId) {
+      const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : 'dashboard';
+      setActiveTab(newActiveTab);
     }
   };
 
@@ -319,12 +378,7 @@ const Index = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      const newTabs = openTabs.filter(t => t.id !== tab.id);
-                      setOpenTabs(newTabs);
-                      if (activeTab === tab.id) {
-                        const newActiveTab = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : 'dashboard';
-                        setActiveTab(newActiveTab);
-                      }
+                      handleTabClose(tab.id);
                     }}
                     className="ml-1 p-1 hover:bg-gray-200 rounded"
                   >

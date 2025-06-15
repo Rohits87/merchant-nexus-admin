@@ -6,7 +6,7 @@ import { TopNavigation } from './TopNavigation';
 interface AdminLayoutProps {
   children: React.ReactNode;
   currentSection: string;
-  onSectionChange: (section: string) => void;
+  onSectionChange: (section: string, parentId?: string) => void;
   topNavItems?: Array<{ id: string; label: string; }>;
   activeTopNav?: string;
   onTopNavChange?: (nav: string) => void;
@@ -20,8 +20,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   activeTopNav,
   onTopNavChange
 }) => {
+  console.log('AdminLayout - Current section:', currentSection);
+  
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50 flex w-full">
       <Sidebar 
         currentSection={currentSection}
         onSectionChange={onSectionChange}
