@@ -1,73 +1,179 @@
-# Welcome to your Lovable project
+# PaymentHub Admin Portal
 
-## Project info
+A comprehensive payment service provider (PSP) admin portal built with Next.js, TypeScript, and Supabase. This application provides a complete solution for managing merchants, payment gateways, acquirer banks, and transaction processing.
 
-**URL**: https://lovable.dev/projects/908c9380-d1e3-41dc-b55f-4ea1b455c34e
+## 🚀 Features
 
-## How can I edit this code?
+### Core Functionality
+- **Merchant Management**: Complete merchant onboarding, configuration, and lifecycle management
+- **Payment Gateway Integration**: Support for multiple payment gateways with real-time configuration
+- **Acquirer Bank Management**: Comprehensive bank partnership and BIN range management
+- **Transaction Processing**: Real-time transaction monitoring and reporting
+- **User Access Control**: Role-based permissions and audit logging
 
-There are several ways of editing your application.
+### Technical Features
+- **Modern Stack**: Built with Next.js 14, React 18, and TypeScript
+- **Database**: Supabase PostgreSQL with real-time subscriptions
+- **UI Components**: Shadcn/ui with Tailwind CSS for responsive design
+- **State Management**: TanStack Query for server state management
+- **Form Handling**: React Hook Form with Zod validation
+- **Charts & Analytics**: Recharts for data visualization
 
-**Use Lovable**
+## 🛠️ Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/908c9380-d1e3-41dc-b55f-4ea1b455c34e) and start prompting.
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Database**: Supabase (PostgreSQL)
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn/ui + Radix UI
+- **State Management**: TanStack Query
+- **Forms**: React Hook Form + Zod
+- **Charts**: Recharts
+- **Icons**: Lucide React
 
-Changes made via Lovable will be committed automatically to this repo.
+## 📦 Installation
 
-**Use your preferred IDE**
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd merchant-nexus-admin
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. **Environment Setup**
+   ```bash
+   cp .env.local.example .env.local
+   ```
+   
+   Update `.env.local` with your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-Follow these steps:
+4. **Database Setup**
+   - The database schema is automatically managed through Supabase migrations
+   - Sample data is included for development
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🏗️ Project Structure
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Home page
+│   ├── providers.tsx      # Global providers
+│   └── globals.css        # Global styles
+├── components/            # React components
+│   ├── ui/               # Shadcn/ui components
+│   ├── layout/           # Layout components
+│   ├── merchants/        # Merchant management
+│   ├── gateways/         # Gateway management
+│   ├── acquirers/        # Acquirer management
+│   └── dashboard/        # Dashboard components
+├── hooks/                # Custom React hooks
+├── lib/                  # Utility functions
+├── integrations/         # External service integrations
+│   └── supabase/        # Supabase client and types
+└── supabase/            # Database migrations
 ```
 
-**Edit a file directly in GitHub**
+## 🔧 Available Scripts
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run type-check` - Run TypeScript type checking
 
-**Use GitHub Codespaces**
+## 🎯 Key Features
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Merchant Management
+- Complete merchant onboarding workflow
+- Multi-tab interface for merchant details
+- Payment method configuration
+- Address and contact management
+- Technical configuration settings
 
-## What technologies are used for this project?
+### Payment Gateway Management
+- Gateway registration and configuration
+- Supported payment methods mapping
+- API endpoint configuration
+- SLA and timeout settings
+- Real-time status monitoring
 
-This project is built with:
+### Acquirer Bank Management
+- Bank partnership management
+- BIN range configuration
+- Multi-currency support
+- Contact and support information
+- Status and maintenance tracking
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Dashboard & Analytics
+- Real-time transaction metrics
+- Revenue and volume tracking
+- Interactive charts and graphs
+- Performance monitoring
+- System health indicators
 
-## How can I deploy this project?
+## 🔐 Security Features
 
-Simply open [Lovable](https://lovable.dev/projects/908c9380-d1e3-41dc-b55f-4ea1b455c34e) and click on Share -> Publish.
+- Row Level Security (RLS) with Supabase
+- Environment variable protection
+- Type-safe database operations
+- Input validation with Zod schemas
+- Secure API endpoints
 
-## Can I connect a custom domain to my Lovable project?
+## 🚀 Deployment
 
-Yes, you can!
+### Vercel (Recommended)
+1. Connect your repository to Vercel
+2. Add environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Other Platforms
+The application can be deployed to any platform that supports Next.js:
+- Netlify
+- Railway
+- DigitalOcean App Platform
+- AWS Amplify
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+For support and questions:
+- Create an issue in the repository
+- Check the documentation
+- Review the code examples
+
+## 🔄 Version History
+
+- **v1.0.0** - Initial release with core PSP functionality
+- **v1.1.0** - Added Next.js 14 support and improved performance
+- **v1.2.0** - Enhanced UI/UX and added advanced analytics
+
+---
+
+Built with ❤️ using Next.js and Supabase
